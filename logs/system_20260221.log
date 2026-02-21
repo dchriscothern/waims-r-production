@@ -1,0 +1,12 @@
+[2026-02-21 00:46:17] [WARNING] Missing packages: quarto 
+[2026-02-21 00:46:17] [WARNING] Install with: install.packages(c('tidyverse','duckdb','DBI','lubridate','janitor','glue','fs','slider','quarto','gt')) 
+[2026-02-21 00:46:17] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-21 00:46:17] [INFO] Root directory: C:/GitHub/waims-r-production 
+[2026-02-21 00:46:17] [INFO] Database: C:/GitHub/waims-r-production/warehouse/waims.duckdb 
+[2026-02-21 00:46:17] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-21 00:46:17] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-21 00:46:17] [INFO] ACWR high risk: >1.5 
+[2026-02-21 00:46:17] [INFO] Sleep critical: <6 hours 
+[2026-02-21 00:46:17] [INFO] CMJ drop yellow: -8% 
+[2026-02-21 00:46:17] [INFO] Asymmetry red: >15% 
+[2026-02-21 00:46:17] [INFO] === SYSTEM READY === 
