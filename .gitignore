@@ -47,3 +47,18 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Raw public pulls + local mapping (do not commit)
+RAW/PUBLIC_WEHOOP/
+RAW/**/player_code_map_LOCAL_ONLY.csv
+
+# Daily outputs
+REPORTS/output/
+
+# Databases
+WAREHOUSE/*.duckdb
+WAREHOUSE/*.wal
+
+# renv
+renv/library/
+renv/staging/

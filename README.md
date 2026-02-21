@@ -1,142 +1,44 @@
-\# WAIMS-R Production
+# AvailOps — Availability Operations (R Ops Pipeline)
 
+Local-first, CSV-first availability & readiness reporting pipeline for pro basketball.  
+Designed to be deployable on team-owned hardware (Windows), with reproducible runs via `renv`, automated execution (Task Scheduler), and portfolio-safe public case study modules.
 
+---
 
-Production monitoring system for professional basketball.
+## What AvailOps Does
 
+AvailOps converts disparate “availability signals” into daily operational outputs: a coach-friendly AM readiness PDF, a weekly review PDF, and machine-readable CSV exports (watchlist + trends). It is intentionally lightweight and deployable without an enterprise AMS, while remaining compatible with future integrations (Teamworks AMS, Whistle/Catapult, Kinexon exports).
 
+---
 
-\## 🎯 Features
+## Modules
 
+### 1) Ops Pipeline (Internal Demo / Synthetic)
+**Inputs**
+- External Activity log (CSV canonical format; designed to map cleanly from Google Sheets / Forms)
 
+**Outputs**
+- `GOLD_EXPORT/external_daily_gold.csv`
+- `GOLD_EXPORT/watchlist_today.csv`
+- `GOLD_EXPORT/team_trends_7d.csv`
+- Daily PDFs (generated locally; not committed): `REPORTS/output/*.pdf`
 
-✅ Multi-source integration  
+### 2) Public Case Study (Portfolio-Safe)
+Uses public ESPN WNBA boxscore data via `wehoop` to generate an anonymized availability summary and an exec-ready PDF case study.
 
-✅ wehoop - 2025 WNBA data  
+**Inputs**
+- Public ESPN boxscore data pulled via `wehoop` (local raw files are ignored)
 
-✅ Research-validated thresholds  
+**Outputs**
+- `GOLD_EXPORT/public_wnba_2025_DAL_availability_anon.csv` ✅ safe to commit
+- `docs/example_outputs/Public_Case_Study_DAL_Anon_example.pdf` ✅ safe to commit
 
-✅ Automated workflows
+> Player identities are anonymized as `DAL25_P##`. No private health/medical data is included.
 
+---
 
+## Quick Start
 
-\## 🚀 Quick Start
-
+### 0) Install packages (first time)
 ```r
-
-install.packages(c("tidyverse","duckdb","wehoop","glue","fs"))
-
-
-
-setwd("C:/projects/waims-r-production")
-
-source("scripts/generate\_sample\_data.R")
-
-```
-
-
-
-\## 🔬 Research
-
-
-
-\- Gabbett (2016): ACWR \[2000+ citations]
-
-\- Bishop et al. (2018): Asymmetry \[400+ citations]
-
-
-
-\## License
-
-MIT
-
-```
-
-
-
-Save and close.
-
-
-
----
-
-
-
-\### \*\*Step 5: Update .gitignore\*\*
-
-
-
-Open `.gitignore`, scroll to bottom, add:
-
-```
-
-
-
-\# Data files
-
-raw/\*.csv
-
-warehouse/\*.duckdb
-
-gold\_export/\*.csv
-
-logs/\*.log
-
-```
-
-
-
-Save and close.
-
-
-
----
-
-
-
-\### \*\*Step 6: Push to GitHub\*\*
-
-
-
-\*\*Go to GitHub Desktop:\*\*
-
-\- All changes shown on left
-
-\- Bottom left: `Add R system structure and scripts`
-
-\- Click \*\*"Commit to main"\*\*
-
-\- Click \*\*"Push origin"\*\*
-
-
-
-✅ \*\*R repo done!\*\* Check online: `github.com/YOUR\_USERNAME/waims-r-production`
-
-
-
----
-
-
-
-\## ✅ DONE! Both Repos Live
-
-
-
-\*\*Verify online:\*\*
-
-1\. `github.com/YOUR\_USERNAME/waims-python` - Should see database file
-
-2\. `github.com/YOUR\_USERNAME/waims-r-production` - Should see folder structure
-
-
-
-\*\*Add to resume:\*\*
-
-```
-
-GitHub: github.com/YOUR\_USERNAME
-
-\- waims-python - Database with 1,600+ data points
-
-\- waims-r-production - Production system with automation
-
+install.packages("renv")
