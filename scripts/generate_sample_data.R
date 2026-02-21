@@ -323,13 +323,16 @@ fp <- expand_grid(date = test_dates, force_plate_id = roster$force_plate_id) %>%
   mutate(
     test_number = row_number(),
     
-    # Baseline with individual variation
-    baseline_height = 30 + (position == "G") * 5 + rnorm(1, 0, 3),
+    # Baseline with individual variation (calculate once per player)
+    baseline_height = 30 + (position == "G") * 5,
     
     # Off-season = improving (strength focus)
     # In-season = declining (fatigue accumulation)
-    weeks_in = as.numeric(date - min(dates)) / 7,
+    weeks_in = as.numeric(date - min(test_dates)) / 7,
     progress = if_else(SCENARIO == "OFF_SEASON", weeks_in * 0.3, -weeks_in * 0.5),
+    
+    # Add individual variation to baseline
+    baseline_height = baseline_height + rnorm(n(), 0, 3),
     
     # Jump metrics
     jump_height_cm = pmax(20, baseline_height + progress + rnorm(n(), 0, 2)),
