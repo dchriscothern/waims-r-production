@@ -12,7 +12,6 @@
 
 library(tidyverse)
 library(lubridate)
-library(gt)
 library(glue)
 
 cat("\n=== Generating Daily Readiness Report ===\n\n")

@@ -7,7 +7,8 @@
 #
 # HOW TO USE:
 #   1. Open this file in RStudio
-#   2. Run line-by-line (Ctrl+Enter) or section-by-section and explain
+#   2. Run line-by-line (Ctrl+Enter) or section-by-section
+#   3. Explain what you're doing as you go
 #
 # ==============================================================================
 
@@ -140,9 +141,7 @@ cat("\n")
 
 cat("\n=== Analysis Example 4: Force Plate Trends ===\n\n")
 
-cat("\n=== Analysis Example 4: Force Plate Trends ===\n\n")
-
-# Jump performance trends - FIXED
+# Jump performance trends
 jump_trends <- force_plate %>%
   left_join(roster %>% select(athlete_id = force_plate_id, display_name), 
             by = c("athlete_id" = "athlete_id")) %>%
@@ -156,9 +155,6 @@ jump_trends <- force_plate %>%
   filter(test_number == max(test_number)) %>%  # Most recent test
   select(display_name, jump_height_cm, change_from_baseline, rsi_mod) %>%
   arrange(change_from_baseline)
-
-cat("Recent force plate results (change from baseline):\n")
-print(head(jump_trends, 5))
 
 cat("Recent force plate results (change from baseline):\n")
 print(head(jump_trends, 5))
