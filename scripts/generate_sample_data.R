@@ -237,10 +237,10 @@ log_msg(glue("Created: {gps_file} ({nrow(gps_export)} records)"))
 log_msg("Generating wellness data...")
 
 wellness <- expand_grid(date = dates, athlete_id = roster$athlete_id) %>%
-  left_join(roster %>% select(athlete_id, display_name, injury_history_count), by = "athlete_id") %>%
+  left_join(roster %>% select(athlete_id, gps_id), by = "athlete_id") %>%
   left_join(
     gps_data %>% select(gps_id, date, session_type, player_load),
-    by = c("date" = "date")
+    by = c("gps_id", "date")  # ✅ Joins on both gps_id AND date - gets correct player!
   ) %>%
   group_by(athlete_id) %>%
   arrange(date) %>%
