@@ -334,12 +334,10 @@ fp <- expand_grid(date = test_dates, force_plate_id = roster$force_plate_id) %>%
 
 fp_export <- fp %>%
   transmute(
-    athlete_id = force_plate_id,
+    athlete_id = force_plate_id,  # <-- Converts to athlete_id
     date,
     test_type,
-    jump_height_cm = round(jump_height_cm, 1),
-    takeoff_velocity_m_s = round(takeoff_velocity_m_s, 2),
-    rsi_mod = round(rsi_mod, 3)
+    jump_height_cm = ...
   )
 
 fp_file <- path(dirs$raw_force, glue("{format(Sys.Date(), '%Y%m%d')}_forceplate.csv"))
@@ -407,3 +405,4 @@ log_msg("Ready to run: source('scripts/run_daily.R')")
 # ==============================================================================
 # END OF SCRIPT
 # ==============================================================================
+
