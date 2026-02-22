@@ -225,21 +225,31 @@ for (i in 1:nrow(readiness)) {
     
     status_class <- tolower(player$status)
     
+    # Get flag text
     flags <- paste(
         player$flag_sleep,
         player$flag_soreness,
         player$flag_fatigue
     ) %>% str_trim()
     
+    # Extract values for glue
+    player_name <- player$display_name
+    player_pos <- player$position
+    player_status <- player$status
+    player_score <- player$readiness_score
+    player_sleep <- player$sleep_hours
+    player_sore <- player$soreness_0_10
+    player_fatigue <- player$fatigue_0_10
+    
     html_content <- paste0(html_content, glue('
             <tr>
-                <td><strong>{player$display_name}</strong></td>
-                <td>{player$position}</td>
-                <td><span class="status-{status_class}">{player$status}</span></td>
-                <td>{player$readiness_score}/100</td>
-                <td>{player$sleep_hours} hrs</td>
-                <td>{player$soreness_0_10}/10</td>
-                <td>{player$fatigue_0_10}/10</td>
+                <td><strong>{player_name}</strong></td>
+                <td>{player_pos}</td>
+                <td><span class="status-{status_class}">{player_status}</span></td>
+                <td>{player_score}/100</td>
+                <td>{player_sleep} hrs</td>
+                <td>{player_sore}/10</td>
+                <td>{player_fatigue}/10</td>
                 <td class="flag">{flags}</td>
             </tr>
     '))
