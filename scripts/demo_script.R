@@ -120,10 +120,7 @@ cat("\n=== Analysis Example 3: Training Load Patterns ===\n\n")
 # Load distribution across players
 load_summary <- gps %>%
   filter(session_type == "PRACTICE") %>%
-  left_join(
-    roster %>% select(gps_id = athlete_id, display_name), 
-    by = c("athlete_id" = "gps_id")
-  ) %>%
+  left_join(roster %>% select(athlete_id, display_name), by = "athlete_id") %>%
   group_by(display_name) %>%
   summarize(
     sessions = n(),
@@ -145,11 +142,7 @@ cat("\n=== Analysis Example 4: Force Plate Trends ===\n\n")
 
 # Jump performance trends
 jump_trends <- force_plate %>%
-  left_join(
-    roster %>% select(force_plate_id = athlete_id, display_name), 
-    by = "force_plate_id"
-  ) %>%
-  rename(athlete_id = force_plate_id) %>%
+  left_join(roster %>% select(athlete_id, display_name), by = "athlete_id") %>%
   group_by(display_name) %>%
   arrange(date) %>%
   mutate(

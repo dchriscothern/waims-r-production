@@ -21,7 +21,7 @@
 #
 # AUTHOR: Chris Cothern
 # DATE: 2026-02-19
-# VERSION: 1.0.2 (Fixed force plate bug)
+# VERSION: 1.0.1 (Updated for 2025/2026 context)
 # ==============================================================================
 
 library(tidyverse)
@@ -46,7 +46,7 @@ SCENARIO <- "OFF_SEASON"  # Options: "OFF_SEASON", "END_OF_SEASON_2025"
 if (SCENARIO == "OFF_SEASON") {
   # Simulate current off-season training (Dec 2025 - Feb 2026)
   start_date <- as.Date("2025-12-01")
-  end_date <- Sys.Date()  # Today (Feb 21, 2026)
+  end_date <- Sys.Date()  # Today (Feb 19, 2026)
   log_msg("Scenario: Off-season training (Dec 2025 - Feb 2026)")
   
 } else if (SCENARIO == "END_OF_SEASON_2025") {
@@ -197,10 +197,24 @@ gps_data <- expand_grid(date = dates, gps_id = roster$gps_id) %>%
     player_load = distance_m/100 + accel_hi_count*1.5 + decel_hi_count*1.5 + hid_m/40
   )
 
+# Add realistic scenario: High-usage player accumulation
+# Player A: Gradual load increase (off-season preparation for next season)
+if (SCENARIO == "OFF_SEASON") {
+  gps_data <- gps_data %>%
+    mutate(
+      # Player A ramping up for 2026 season
+      player_load = if_else(
+        display_name == "Player A" & row_number() > n()/2,
+        player_load * runif(n(), 1.1, 1.3),  # Increase in second half
+        player_load
+      )
+    )
+}
+
 # Export GPS data
 gps_export <- gps_data %>%
   transmute(
-    athlete_id = gps_id,
+    athlete_id = gps_id,  # Convert to standard athlete_id
     date,
     session_type,
     minutes = round(minutes, 1),
@@ -226,12 +240,8 @@ wellness <- expand_grid(date = dates, athlete_id = roster$athlete_id) %>%
   left_join(roster %>% select(athlete_id, display_name, injury_history_count), by = "athlete_id") %>%
   left_join(
     gps_data %>% select(gps_id, date, session_type, player_load),
-    by = c("date" = "date"),
-    relationship = "many-to-many"
+    by = c("date" = "date")
   ) %>%
-  group_by(athlete_id, date) %>%
-  slice(1) %>%  # Take first match per athlete per date
-  ungroup() %>%
   group_by(athlete_id) %>%
   arrange(date) %>%
   mutate(
@@ -243,7 +253,7 @@ wellness <- expand_grid(date = dates, athlete_id = roster$athlete_id) %>%
     
     # Sleep varies with load
     sleep_hours = pmin(9.5, pmax(5.5,
-                                 base_sleep - (days_in_period / max(days_in_period)) * 0.8 + rnorm(n(), 0, 0.6)
+      base_sleep - (days_in_period / max(days_in_period)) * 0.8 + rnorm(n(), 0, 0.6)
     )),
     
     # Soreness correlates with load
@@ -256,7 +266,7 @@ wellness <- expand_grid(date = dates, athlete_id = roster$athlete_id) %>%
     base_fatigue = if_else(SCENARIO == "OFF_SEASON", 2, 3),
     fatigue_0_10 = pmin(10, pmax(0, round(
       base_fatigue + (days_in_period / max(days_in_period)) * 2 + 
-        (10 - sleep_hours) * 0.5 + rnorm(n(), 0, 1.5)
+      (10 - sleep_hours) * 0.5 + rnorm(n(), 0, 1.5)
     ))),
     
     # Stress (off-season = lower)
@@ -273,7 +283,7 @@ wellness <- expand_grid(date = dates, athlete_id = roster$athlete_id) %>%
     # Pain (lower in off-season due to recovery time)
     pain_knee_0_10 = pmin(10, pmax(0, round(
       if_else(SCENARIO == "OFF_SEASON", 0.5, 1.5) +
-        soreness_0_10 * 0.2 + rnorm(n(), 0, 1.0)
+      soreness_0_10 * 0.2 + rnorm(n(), 0, 1.0)
     ))),
     
     free_text = ""
@@ -298,7 +308,7 @@ write_csv(wellness_export, well_file)
 log_msg(glue("Created: {well_file} ({nrow(wellness_export)} records)"))
 
 # ==============================================================================
-# FORCE PLATE DATA (Weekly Testing) - FIXED
+# FORCE PLATE DATA (Weekly Testing)
 # ==============================================================================
 
 log_msg("Generating force plate data...")
@@ -306,7 +316,7 @@ log_msg("Generating force plate data...")
 # Test on Mondays (weekly)
 test_dates <- dates[wday(dates, week_start = 1) == 1]
 
-# Calculate progress multiplier OUTSIDE of mutate (this fixes the bug!)
+# Determine multiplier based on scenario (outside of mutate)
 progress_multiplier <- if (SCENARIO == "OFF_SEASON") 0.3 else -0.5
 
 fp <- expand_grid(date = test_dates, force_plate_id = roster$force_plate_id) %>%
@@ -334,10 +344,12 @@ fp <- expand_grid(date = test_dates, force_plate_id = roster$force_plate_id) %>%
 
 fp_export <- fp %>%
   transmute(
-    athlete_id = force_plate_id,  # <-- Converts to athlete_id
+    athlete_id = force_plate_id,  # Convert to standard athlete_id
     date,
     test_type,
-    jump_height_cm = ...
+    jump_height_cm = round(jump_height_cm, 1),
+    takeoff_velocity_m_s = round(takeoff_velocity_m_s, 2),
+    rsi_mod = round(rsi_mod, 3)
   )
 
 fp_file <- path(dirs$raw_force, glue("{format(Sys.Date(), '%Y%m%d')}_forceplate.csv"))
@@ -369,7 +381,7 @@ wearable <- expand_grid(date = dates, wearable_id = roster$wearable_id) %>%
 
 wearable_export <- wearable %>%
   transmute(
-    athlete_id = wearable_id,
+    athlete_id = wearable_id,  # Convert to standard athlete_id
     date,
     steps,
     active_minutes = round(active_minutes, 0),
@@ -405,4 +417,3 @@ log_msg("Ready to run: source('scripts/run_daily.R')")
 # ==============================================================================
 # END OF SCRIPT
 # ==============================================================================
-
