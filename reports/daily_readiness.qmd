@@ -11,26 +11,25 @@ execute:
 ---
 
 ```{r}
-```{r}
+#| include: false
 library(here)
 library(readr)
 library(dplyr)
 library(lubridate)
 library(stringr)
 library(tibble)
+library(knitr)
 
-source(here::here("scripts", "config.R"))
+# Suppress console/log output from config during render
+invisible(capture.output(source(here::here("scripts", "config.R"))))
 
-wellness_dir <- here::here("raw", "wellness")
+# Find latest available date from wellness files (expects YYYYMMDD_wellness.csv)
 wellness_files <- list.files(
-  wellness_dir,
+  here::here("raw", "wellness"),
   pattern = "^\\d{8}_wellness\\.csv$",
   full.names = TRUE
 )
-
-if (length(wellness_files) == 0) {
-  stop("No wellness files found in raw/wellness. Expected YYYYMMDD_wellness.csv")
-}
+if (length(wellness_files) == 0) stop("No wellness files found in raw/wellness. Expected YYYYMMDD_wellness.csv")
 
 # Pick the latest by date parsed from filename
 wellness_dates <- ymd(str_extract(basename(wellness_files), "^\\d{8}"))
@@ -38,16 +37,106 @@ latest_idx <- which.max(wellness_dates)
 latest_wellness <- wellness_files[latest_idx]
 report_date <- format(wellness_dates[latest_idx], "%Y%m%d")
 
-wellness <- read_csv(latest_wellness, show_col_types = FALSE)
+# Load data
+wellness <- read_csv(latest_wellness, show_col_types = FALSE) %>%
+  mutate(date = as.Date(date))
 
-gps_path <- here::here("raw", "gps", paste0(report_date, "_gps_practice.csv"))
+gps_path   <- here::here("raw", "gps",         paste0(report_date, "_gps_practice.csv"))
 force_path <- here::here("raw", "force_plate", paste0(report_date, "_forceplate.csv"))
 
-if (!file.exists(gps_path)) warning("GPS file not found: ", gps_path)
-if (!file.exists(force_path)) warning("Force plate file not found: ", force_path)
+gps <- if (file.exists(gps_path)) {
+  read_csv(gps_path, show_col_types = FALSE) %>% mutate(date = as.Date(date))
+} else {
+  tibble()
+}
 
-gps <- if (file.exists(gps_path)) read_csv(gps_path, show_col_types = FALSE) else tibble()
-force_plate <- if (file.exists(force_path)) read_csv(force_path, show_col_types = FALSE) else tibble()
+force_plate <- if (file.exists(force_path)) {
+  read_csv(force_path, show_col_types = FALSE) %>% mutate(date = as.Date(date))
+} else {
+  tibble()
+}
 
 roster <- read_csv(here::here("ref", "athlete_roster.csv"), show_col_types = FALSE)
+
+# ---------- Report content ----------
+
+cat("## Report date\n")
+cat("**Data date:** ", report_date, "\n\n", sep = "")
+
+cat("## Today’s flags (wellness)\n\n")
+todays_wellness <- wellness %>%
+  filter(date == max(date, na.rm = TRUE)) %>%
+  left_join(roster %>% select(athlete_id, display_name), by = "athlete_id") %>%
+  mutate(
+    needs_attention = (sleep_hours < 6.5) | (soreness_0_10 >= 7) | (fatigue_0_10 >= 7)
+  ) %>%
+  arrange(desc(needs_attention), sleep_hours)
+
+flags <- todays_wellness %>%
+  filter(needs_attention) %>%
+  select(display_name, sleep_hours, soreness_0_10, fatigue_0_10)
+
+if (nrow(flags) == 0) {
+  cat("No athletes flagged by today’s simple thresholds.\n\n")
+} else {
+  print(kable(flags, caption = "Athletes flagged for follow-up today"))
+  cat("\n\n")
+}
+
+cat("## Sleep trends (last 7 days)\n\n")
+sleep_trends <- wellness %>%
+  filter(date >= max(date, na.rm = TRUE) - days(6)) %>%
+  left_join(roster %>% select(athlete_id, display_name), by = "athlete_id") %>%
+  group_by(display_name) %>%
+  summarize(
+    avg_sleep = round(mean(sleep_hours, na.rm = TRUE), 1),
+    min_sleep = round(min(sleep_hours, na.rm = TRUE), 1),
+    days_under_7 = sum(sleep_hours < 7, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(avg_sleep)
+
+print(kable(head(sleep_trends, 12), caption = "Sleep summary (last 7 days)"))
+cat("\n\n")
+
+cat("## Training load summary (GPS)\n\n")
+if (nrow(gps) == 0) {
+  cat("GPS file not found for this date, so load summaries are skipped.\n\n")
+} else {
+  load_summary <- gps %>%
+    filter(session_type == "PRACTICE") %>%
+    left_join(roster %>% select(athlete_id, display_name), by = "athlete_id") %>%
+    group_by(display_name) %>%
+    summarize(
+      sessions = n(),
+      avg_minutes = round(mean(minutes, na.rm = TRUE), 1),
+      total_distance_km = round(sum(distance_m, na.rm = TRUE) / 1000, 1),
+      avg_player_load = round(mean(player_load, na.rm = TRUE), 1),
+      .groups = "drop"
+    ) %>%
+    arrange(desc(total_distance_km))
+
+  print(kable(head(load_summary, 12), caption = "Practice load summary"))
+  cat("\n\n")
+}
+
+cat("## Force plate snapshot\n\n")
+if (nrow(force_plate) == 0) {
+  cat("Force plate file not found for this date, so jump summaries are skipped.\n\n")
+} else {
+  jump_trends <- force_plate %>%
+    left_join(roster %>% select(athlete_id, display_name), by = "athlete_id") %>%
+    group_by(display_name) %>%
+    arrange(date) %>%
+    mutate(
+      baseline_jump = first(jump_height_cm),
+      change_from_baseline = round(((jump_height_cm - baseline_jump) / baseline_jump) * 100, 1)
+    ) %>%
+    slice_tail(n = 1) %>%
+    ungroup() %>%
+    arrange(change_from_baseline)
+
+  print(kable(head(jump_trends, 12), caption = "Latest force plate results (vs baseline)"))
+  cat("\n\n")
+}
 ```
