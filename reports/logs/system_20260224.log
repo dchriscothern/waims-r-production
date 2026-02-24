@@ -1956,3 +1956,36 @@
 [2026-02-24 15:06:38] [INFO] CMJ drop yellow: -8% 
 [2026-02-24 15:06:38] [INFO] Asymmetry red: >15% 
 [2026-02-24 15:06:38] [INFO] === SYSTEM READY === 
+[2026-02-24 15:11:42] [INFO] All required packages installed ✓ 
+[2026-02-24 15:11:42] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-24 15:11:42] [INFO] Root directory: C:/GitHub/waims-r-production/reports 
+[2026-02-24 15:11:42] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-02-24 15:11:42] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-24 15:11:42] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-24 15:11:42] [INFO] ACWR high risk: >1.5 
+[2026-02-24 15:11:42] [INFO] Sleep critical: <6 hours 
+[2026-02-24 15:11:42] [INFO] CMJ drop yellow: -8% 
+[2026-02-24 15:11:42] [INFO] Asymmetry red: >15% 
+[2026-02-24 15:11:42] [INFO] === SYSTEM READY === 
+[2026-02-24 15:13:40] [INFO] All required packages installed ✓ 
+[2026-02-24 15:13:40] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-24 15:13:40] [INFO] Root directory: C:/GitHub/waims-r-production/reports 
+[2026-02-24 15:13:40] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-02-24 15:13:40] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-24 15:13:40] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-24 15:13:40] [INFO] ACWR high risk: >1.5 
+[2026-02-24 15:13:40] [INFO] Sleep critical: <6 hours 
+[2026-02-24 15:13:40] [INFO] CMJ drop yellow: -8% 
+[2026-02-24 15:13:40] [INFO] Asymmetry red: >15% 
+[2026-02-24 15:13:40] [INFO] === SYSTEM READY === 
+[2026-02-24 15:45:03] [INFO] All required packages installed ✓ 
+[2026-02-24 15:45:03] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-24 15:45:03] [INFO] Root directory: C:/GitHub/waims-r-production/reports 
+[2026-02-24 15:45:03] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-02-24 15:45:03] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-24 15:45:03] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-24 15:45:03] [INFO] ACWR high risk: >1.5 
+[2026-02-24 15:45:03] [INFO] Sleep critical: <6 hours 
+[2026-02-24 15:45:03] [INFO] CMJ drop yellow: -8% 
+[2026-02-24 15:45:03] [INFO] Asymmetry red: >15% 
+[2026-02-24 15:45:03] [INFO] === SYSTEM READY === 
