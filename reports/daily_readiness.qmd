@@ -13,7 +13,6 @@ execute:
 
 ```{r}
 #| include: false
-
 library(here)
 library(readr)
 library(dplyr)
@@ -21,36 +20,65 @@ library(magrittr)
 library(lubridate)
 library(stringr)
 library(tibble)
+library(htmltools)
+library(knitr)
 
 # Hide config logging during render
 invisible(capture.output(source(here::here("scripts", "config.R"))))
 
-# Latest wellness file drives report_date
+# ---- Resolve latest date from wellness files ----
 wellness_files <- list.files(
   here::here("raw", "wellness"),
   pattern = "^\\d{8}_wellness\\.csv$",
   full.names = TRUE
 )
-if (length(wellness_files) == 0) stop("No wellness files found in raw/wellness.")
+if (length(wellness_files) == 0) stop("No wellness files found in raw/wellness. Expected YYYYMMDD_wellness.csv")
 
 latest_wellness <- sort(wellness_files)[length(wellness_files)]
-report_date <- str_extract(basename(latest_wellness), "^\\d{8}")
+report_date <- str_extract(basename(latest_wellness), "^\\d{8}")  # YYYYMMDD
 
+# ---- Load data ----
 wellness <- read_csv(latest_wellness, show_col_types = FALSE) %>%
   mutate(date = as.Date(date))
 
 roster <- read_csv(here::here("ref", "athlete_roster.csv"), show_col_types = FALSE)
+
+# Optional GPS for "session difficulty" + position load bars
+gps_path <- here::here("raw", "gps", paste0(report_date, "_gps_practice.csv"))
+gps <- if (file.exists(gps_path)) read_csv(gps_path, show_col_types = FALSE) else tibble()
+
+if (nrow(gps) > 0 && "date" %in% names(gps)) {
+  gps <- gps %>% mutate(date = as.Date(date))
+}
+
+today_date <- max(wellness$date, na.rm = TRUE)
+
+# Basketball position grouping helper (PG/SG/G -> Guard, SF/PF/F -> Forward, C -> Center)
+pos_group <- function(pos) {
+  p <- toupper(trimws(as.character(pos)))
+  dplyr::case_when(
+    str_detect(p, "C") ~ "C",
+    str_detect(p, "F") ~ "F",
+    str_detect(p, "G") ~ "G",
+    TRUE ~ "UNK"
+  )
+}
 ``` 
 
 ```{r}
-#| echo: false
-#| output: asis
-library(htmltools)
+#| include: false
+# ---- Build athlete-level readiness table (from wellness) ----
+# Expecting wellness columns: sleep_hours, soreness_0_10, fatigue_0_10
+# Expecting roster columns: athlete_id, display_name, position (optional)
+
+if (!"display_name" %in% names(roster)) roster$display_name <- roster$athlete_id
+if (!"position" %in% names(roster)) roster$position <- ""
 
 today <- wellness %>%
-  filter(date == max(date, na.rm = TRUE)) %>%
-  left_join(roster, by = "athlete_id") %>%
+  filter(date == today_date) %>%
+  left_join(roster %>% select(athlete_id, display_name, position), by = "athlete_id") %>%
   mutate(
+    # Simple demo readiness score (swap with your WAIMS model)
     readiness_score = pmax(0, pmin(100,
       100 -
         (fatigue_0_10 * 6) -
@@ -67,24 +95,144 @@ today <- wellness %>%
       status == "YELLOW" ~ "status-yellow",
       TRUE ~ "status-green"
     ),
+    pos_grp = pos_group(position),
     flags = paste(
       if_else(sleep_hours < 6.5, "⚠️ Poor Sleep", ""),
       if_else(fatigue_0_10 >= 7, "⚠️ High Fatigue", ""),
       if_else(soreness_0_10 >= 7, "⚠️ High Soreness", ""),
       sep = " "
     ) %>% str_squish()
-  )
+  ) %>%
+  arrange(match(status, c("RED","YELLOW","GREEN")), readiness_score)
 
 ready_n   <- sum(today$status == "GREEN", na.rm = TRUE)
 monitor_n <- sum(today$status == "YELLOW", na.rm = TRUE)
 needs_n   <- sum(today$status == "RED", na.rm = TRUE)
 avg_sleep <- round(mean(today$sleep_hours, na.rm = TRUE), 1)
 
-header <- div(class = "header",
-  h1("🏀 Daily Readiness Report"),
-  p(paste0(report_date, " | Off-Season Training"))
+# ---- Session difficulty (prefer GPS; fallback to wellness composition) ----
+difficulty <- "Moderate"
+load_delta <- NA_real_
+duration_min <- NA_real_
+
+if (nrow(gps) > 0) {
+  # choose a load metric in order of preference
+  load_col <- dplyr::case_when(
+    "player_load" %in% names(gps) ~ "player_load",
+    "load" %in% names(gps) ~ "load",
+    "distance_m" %in% names(gps) ~ "distance_m",
+    "minutes" %in% names(gps) ~ "minutes",
+    TRUE ~ NA_character_
+  )
+
+  if (!is.na(load_col)) {
+    # If date exists, use it. Otherwise assume file is "today".
+    gps_today <- if ("date" %in% names(gps)) gps %>% filter(date == today_date) else gps
+    gps_hist  <- if ("date" %in% names(gps)) gps %>% filter(date < today_date) else tibble()
+
+    team_today <- sum(gps_today[[load_col]], na.rm = TRUE)
+    if (nrow(gps_hist) > 0 && "date" %in% names(gps_hist)) {
+      team_hist_7 <- gps_hist %>%
+        filter(date >= today_date - days(7)) %>%
+        group_by(date) %>%
+        summarize(v = sum(.data[[load_col]], na.rm = TRUE), .groups = "drop") %>%
+        summarize(avg = mean(v, na.rm = TRUE), .groups = "drop") %>%
+        pull(avg)
+      load_delta <- if (!is.na(team_hist_7) && team_hist_7 > 0) (team_today / team_hist_7) - 1 else NA_real_
+    }
+
+    # duration
+    if ("minutes" %in% names(gps_today)) duration_min <- round(mean(gps_today$minutes, na.rm = TRUE), 0)
+
+    # map delta to difficulty
+    if (!is.na(load_delta)) {
+      difficulty <- case_when(
+        load_delta <= -0.10 ~ "Easy",
+        load_delta <=  0.05 ~ "Light",
+        load_delta <=  0.15 ~ "Moderate",
+        load_delta <=  0.30 ~ "Hard",
+        TRUE                ~ "Very Hard"
+      )
+    }
+  }
+}
+
+if (is.na(load_delta)) {
+  # fallback difficulty based on % flagged
+  frac_flagged <- (needs_n + monitor_n) / max(1, nrow(today))
+  difficulty <- case_when(
+    frac_flagged < 0.20 ~ "Easy",
+    frac_flagged < 0.35 ~ "Light",
+    frac_flagged < 0.55 ~ "Moderate",
+    frac_flagged < 0.75 ~ "Hard",
+    TRUE                ~ "Very Hard"
+  )
+}
+
+# ---- Position bars (basketball: G/F/C) ----
+pos_summary <- NULL
+if (nrow(gps) > 0 && "athlete_id" %in% names(gps) && ("player_load" %in% names(gps) || "distance_m" %in% names(gps))) {
+  load_col2 <- if ("player_load" %in% names(gps)) "player_load" else "distance_m"
+  gps_today <- if ("date" %in% names(gps)) gps %>% filter(date == today_date) else gps
+
+  pos_summary <- gps_today %>%
+    left_join(roster %>% select(athlete_id, position), by = "athlete_id") %>%
+    mutate(pos_grp = pos_group(position)) %>%
+    group_by(pos_grp) %>%
+    summarize(avg_load = mean(.data[[load_col2]], na.rm = TRUE), .groups = "drop") %>%
+    filter(pos_grp != "UNK") %>%
+    arrange(desc(avg_load))
+
+  pos_units <- if (load_col2 == "distance_m") "m" else ""
+} else {
+  # fallback: avg readiness by position group
+  pos_summary <- today %>%
+    group_by(pos_grp) %>%
+    summarize(avg_load = mean(readiness_score, na.rm = TRUE), .groups = "drop") %>%
+    filter(pos_grp != "UNK") %>%
+    arrange(desc(avg_load))
+  pos_units <- "score"
+}
+
+# ---- Key insights (basketball phrasing) ----
+insights <- c()
+insights <- c(insights, paste0("Flags: ", needs_n, " RED, ", monitor_n, " YELLOW (", nrow(today), " athletes)"))
+insights <- c(insights, paste0("Average sleep: ", avg_sleep, " hrs"))
+if (!is.na(duration_min)) insights <- c(insights, paste0("Avg session duration: ", duration_min, " min"))
+if (!is.na(load_delta)) insights <- c(insights, paste0("Session load vs last 7 days: ", sprintf("%+.0f%%", 100*load_delta)))
+insights <- head(insights, 4)
+
+# ---- Flags-only list (top 8) ----
+flags_tbl <- today %>%
+  filter(status %in% c("RED","YELLOW")) %>%
+  mutate(reason = if_else(flags == "", "Low composite readiness", flags)) %>%
+  transmute(
+    Athlete = paste0("<strong>", display_name, "</strong>"),
+    Pos = position,
+    Status = paste0("<span class='", status_class, "'>", status, "</span>"),
+    Why = reason,
+    Action = case_when(
+      status == "RED" ~ "Intervene (reduce load / medical check)",
+      TRUE            ~ "Monitor + adjust plan"
+    )
+  ) %>%
+  slice_head(n = 8)
+``` 
+
+```{r}
+#| echo: false
+#| output: asis
+# ---- PAGE HEADER + TOP KPIs + DIFFICULTY BAND + 2-COL PANELS ----
+
+band_levels <- c("Easy","Light","Moderate","Hard","Very Hard")
+band_colors <- c("#b7ff00","#6be400","#ffe066","#ff9f1c","#ff3b30")
+
+header_bar <- div(class = "topbar header",
+  h1(class="title", "🏀 Daily Readiness Report"),
+  p(class="subtitle", paste0(report_date, " | Off-Season Training"))
 )
 
+# If you kept the old .summary-cards styles, these cards will still work.
 cards <- div(class = "summary-cards",
   div(class="card", h3("Ready to Train"),  div(class="value", ready_n),   p(style="color:#060;", "Full training cleared")),
   div(class="card", h3("Monitor Closely"), div(class="value", monitor_n), p(style="color:#880;", "Modified training recommended")),
@@ -92,20 +240,74 @@ cards <- div(class = "summary-cards",
   div(class="card", h3("Average Sleep"),   div(class="value", avg_sleep), p(style="color:#666;", "hours (target: 8+)"))
 )
 
-knitr::asis_output(as.character(tagList(header, cards)))
+band <- div(class="band",
+  lapply(seq_along(band_levels), function(i){
+    cls <- paste("cell", if (band_levels[i] == difficulty) "active" else "")
+    div(class=cls, style=paste0("background:", band_colors[i], ";"), band_levels[i])
+  })
+)
 
+# Position bars (G/F/C)
+if (is.null(pos_summary) || nrow(pos_summary) == 0) {
+  pos_panel <- div(class="panel", h2("Avg load by position"), "No position summary available.")
+} else {
+  maxv <- max(pos_summary$avg_load, na.rm = TRUE)
+  bars <- tags$div(
+    lapply(seq_len(nrow(pos_summary)), function(i){
+      pct <- if (maxv > 0) round(100 * pos_summary$avg_load[i] / maxv) else 0
+      tags$div(style="display:flex; align-items:center; gap:10px; margin:8px 0;",
+        tags$div(style="width:36px; font-weight:800;", pos_summary$pos_grp[i]),
+        tags$div(style=paste0("flex:1; height:18px; background:#ffd166; border-radius:6px; width:", pct, "%;")),
+        tags$div(style="width:70px; text-align:right; font-weight:800;",
+                 paste0(round(pos_summary$avg_load[i], 1), ifelse(pos_units == "", "", paste0(" ", pos_units))))
+      )
+    })
+  )
+  pos_panel <- div(class="panel",
+    h2("Position overview (G/F/C)"),
+    tags$p(strong("Session difficulty: "), difficulty),
+    band,
+    bars
+  )
+}
 
-``` 
+# Key insights panel
+ins_panel <- div(class="panel",
+  h2("Key insights"),
+  tags$ul(lapply(insights, tags$li))
+)
+
+# Flags panel (only if flags exist)
+flags_panel <- if (nrow(flags_tbl) == 0) {
+  div(class="panel",
+    h2("Flags"),
+    "No RED/YELLOW athletes by current thresholds."
+  )
+} else {
+  flags_html <- knitr::kable(flags_tbl, format="html", escape = FALSE)
+  div(class="panel",
+    h2("Flags (action list)"),
+    HTML(flags_html)
+  )
+}
+
+layout <- div(class="page",
+  header_bar,
+  cards,
+  div(class="grid", pos_panel, div(ins_panel, flags_panel))
+)
+
+knitr::asis_output(as.character(layout))
+```
 
 ```{r}
 #| echo: false
 #| output: asis
-library(htmltools)
-
+# ---- PLAYER READINESS TABLE (FULL ROSTER) ----
 tbl <- today %>%
   transmute(
     Player   = paste0("<strong>", display_name, "</strong>"),
-    Position = if ("position" %in% names(today)) position else "",
+    Position = position,
     Status   = paste0("<span class='", status_class, "'>", status, "</span>"),
     Score    = paste0(round(readiness_score), "/100"),
     Sleep    = paste0(round(sleep_hours, 1), " hrs"),
@@ -114,22 +316,16 @@ tbl <- today %>%
     Flags    = if_else(flags == "", "", paste0("<span class='flag'>", flags, "</span>"))
   )
 
-table_tag <- tags$table(
-  tags$thead(tags$tr(lapply(names(tbl), tags$th))),
-  tags$tbody(lapply(seq_len(nrow(tbl)), function(i) {
-    tags$tr(lapply(tbl[i, ], function(x) tags$td(HTML(as.character(x)))))
-  }))
+table_html <- knitr::kable(tbl, format="html", escape = FALSE)
+
+footer <- div(class="footer",
+  p(tags$strong("WAIMS Monitoring System"), " | Basketball monitoring one-pager"),
+  p(paste0("Generated: ", format(Sys.time(), "%Y-%m-%d %H:%M:%S")))
 )
 
 knitr::asis_output(as.character(tagList(
-  tags$h2(style="margin: 30px 0 20px 0;", "Player Readiness Status"),
-  table_tag,
-  div(class="footer",
-      p(tags$strong("WAIMS Monitoring System"), " | Research-Validated Athlete Monitoring"),
-      p(paste0("Generated: ", format(Sys.time(), "%Y-%m-%d %H:%M:%S")))
-  )
+  tags$h2(style="margin: 26px 0 14px 0;", "Player Readiness Status"),
+  HTML(table_html),
+  footer
 )))
-
-
 ```
-
