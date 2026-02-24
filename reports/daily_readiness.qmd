@@ -14,7 +14,6 @@ execute:
 ```{r}
 #| include: false
 
-library(tinytex)
 library(here)
 library(readr)
 library(dplyr)
@@ -131,6 +130,6 @@ knitr::asis_output(as.character(tagList(
   )
 )))
 
-source(here::here("reports", "render_daily_readiness.R"))
+
 ```
 
