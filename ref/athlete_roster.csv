@@ -1,0 +1,13 @@
+athlete_id,display_name,position,role_tier,gps_id,force_plate_id,wearable_id,status_active,injury_history_count
+ATH_001,Player A,G,Starter,GPS_001,FP_001,WR_001,1,3
+ATH_002,Player B,G,Starter,GPS_002,FP_002,WR_002,1,1
+ATH_003,Player C,F,Starter,GPS_003,FP_003,WR_003,1,4
+ATH_004,Player D,C,Starter,GPS_004,FP_004,WR_004,1,2
+ATH_005,Player E,F,Rotation,GPS_005,FP_005,WR_005,1,3
+ATH_006,Player F,F,Rotation,GPS_006,FP_006,WR_006,1,1
+ATH_007,Player G,G,Rotation,GPS_007,FP_007,WR_007,1,1
+ATH_008,Player H,G,Bench,GPS_008,FP_008,WR_008,1,0
+ATH_009,Player I,C,Bench,GPS_009,FP_009,WR_009,1,1
+ATH_010,Player J,G,Bench,GPS_010,FP_010,WR_010,1,0
+ATH_011,Player K,F,Bench,GPS_011,FP_011,WR_011,1,2
+ATH_012,Player L,F,Bench,GPS_012,FP_012,WR_012,1,1
