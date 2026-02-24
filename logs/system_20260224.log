@@ -1,0 +1,62 @@
+[2026-02-24 09:44:40] [INFO] All required packages installed ✓ 
+[2026-02-24 09:44:40] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-24 09:44:40] [INFO] Root directory: C:/GitHub/waims-r-production 
+[2026-02-24 09:44:40] [INFO] Database: C:/GitHub/waims-r-production/warehouse/waims.duckdb 
+[2026-02-24 09:44:40] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-24 09:44:40] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-24 09:44:40] [INFO] ACWR high risk: >1.5 
+[2026-02-24 09:44:40] [INFO] Sleep critical: <6 hours 
+[2026-02-24 09:44:40] [INFO] CMJ drop yellow: -8% 
+[2026-02-24 09:44:40] [INFO] Asymmetry red: >15% 
+[2026-02-24 09:44:40] [INFO] === SYSTEM READY === 
+[2026-02-24 09:44:41] [INFO] All required packages installed ✓ 
+[2026-02-24 09:44:41] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-24 09:44:41] [INFO] Root directory: C:/GitHub/waims-r-production 
+[2026-02-24 09:44:41] [INFO] Database: C:/GitHub/waims-r-production/warehouse/waims.duckdb 
+[2026-02-24 09:44:41] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-24 09:44:41] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-24 09:44:41] [INFO] ACWR high risk: >1.5 
+[2026-02-24 09:44:41] [INFO] Sleep critical: <6 hours 
+[2026-02-24 09:44:41] [INFO] CMJ drop yellow: -8% 
+[2026-02-24 09:44:41] [INFO] Asymmetry red: >15% 
+[2026-02-24 09:44:41] [INFO] === SYSTEM READY === 
+[2026-02-24 09:44:41] [INFO] === GENERATING SAMPLE DATA === 
+[2026-02-24 09:44:41] [INFO] Current date: 2026-02-24 
+[2026-02-24 09:44:41] [INFO] Context: Off-season training (2025 season completed) 
+[2026-02-24 09:44:41] [INFO] Scenario: Off-season training (Dec 2025 - Feb 2026) 
+[2026-02-24 09:44:42] [INFO] Created roster: 12 players 
+[2026-02-24 09:44:42] [INFO] Date range: 2025-12-01 to 2026-02-24 (86 days) 
+[2026-02-24 09:44:42] [INFO] Generating GPS/practice load data... 
+[2026-02-24 09:44:42] [INFO] Created: C:/GitHub/waims-r-production/raw/gps/20260224_gps_practice.csv (1032 records) 
+[2026-02-24 09:44:42] [INFO] Generating wellness data... 
+[2026-02-24 09:44:42] [INFO] Created: C:/GitHub/waims-r-production/raw/wellness/20260224_wellness.csv (1032 records) 
+[2026-02-24 09:44:42] [INFO] Generating force plate data... 
+[2026-02-24 09:44:42] [INFO] Created: C:/GitHub/waims-r-production/raw/force_plate/20260224_forceplate.csv (156 records) 
+[2026-02-24 09:44:42] [INFO] Generating wearable data... 
+[2026-02-24 09:44:42] [INFO] Created: C:/GitHub/waims-r-production/raw/wearables/20260224_wearables.csv (1032 records) 
+[2026-02-24 09:44:42] [INFO] === SAMPLE DATA GENERATION COMPLETE === 
+[2026-02-24 09:44:42] [INFO] Scenario: OFF_SEASON 
+[2026-02-24 09:44:42] [INFO] Date range: 2025-12-01 to 2026-02-24 (86 days) 
+[2026-02-24 09:44:42] [INFO] Roster: 12 players 
+[2026-02-24 09:44:42] [INFO] GPS records: 1032 
+[2026-02-24 09:44:42] [INFO] Wellness records: 1032 
+[2026-02-24 09:44:42] [INFO] Force plate records: 156 
+[2026-02-24 09:44:42] [INFO] Wearable records: 1032 
+[2026-02-24 09:44:42] [INFO]  
+[2026-02-24 09:44:42] [INFO] CONTEXT: February 2026 - Off-season training 
+[2026-02-24 09:44:42] [INFO] - 2025 season completed (May-October 2025) 
+[2026-02-24 09:44:42] [INFO] - Current: Off-season strength & conditioning 
+[2026-02-24 09:44:42] [INFO] - Next: 2026 season starts May 2026 
+[2026-02-24 09:44:42] [INFO]  
+[2026-02-24 09:44:42] [INFO] Ready to run: source('scripts/run_daily.R') 
+[2026-02-24 10:24:32] [INFO] All required packages installed ✓ 
+[2026-02-24 10:24:32] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-24 10:24:32] [INFO] Root directory: C:/GitHub/waims-r-production 
+[2026-02-24 10:24:32] [INFO] Database: C:/GitHub/waims-r-production/warehouse/waims.duckdb 
+[2026-02-24 10:24:32] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-24 10:24:32] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-24 10:24:32] [INFO] ACWR high risk: >1.5 
+[2026-02-24 10:24:32] [INFO] Sleep critical: <6 hours 
+[2026-02-24 10:24:32] [INFO] CMJ drop yellow: -8% 
+[2026-02-24 10:24:32] [INFO] Asymmetry red: >15% 
+[2026-02-24 10:24:32] [INFO] === SYSTEM READY === 

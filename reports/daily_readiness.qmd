@@ -1,0 +1,53 @@
+---
+title: "WAIMS Daily Readiness"
+format:
+  html:
+    embed-resources: true
+execute:
+  echo: false
+  warning: false
+  message: false
+  execute-dir: project
+---
+
+```{r}
+```{r}
+library(here)
+library(readr)
+library(dplyr)
+library(lubridate)
+library(stringr)
+library(tibble)
+
+source(here::here("scripts", "config.R"))
+
+wellness_dir <- here::here("raw", "wellness")
+wellness_files <- list.files(
+  wellness_dir,
+  pattern = "^\\d{8}_wellness\\.csv$",
+  full.names = TRUE
+)
+
+if (length(wellness_files) == 0) {
+  stop("No wellness files found in raw/wellness. Expected YYYYMMDD_wellness.csv")
+}
+
+# Pick the latest by date parsed from filename
+wellness_dates <- ymd(str_extract(basename(wellness_files), "^\\d{8}"))
+latest_idx <- which.max(wellness_dates)
+latest_wellness <- wellness_files[latest_idx]
+report_date <- format(wellness_dates[latest_idx], "%Y%m%d")
+
+wellness <- read_csv(latest_wellness, show_col_types = FALSE)
+
+gps_path <- here::here("raw", "gps", paste0(report_date, "_gps_practice.csv"))
+force_path <- here::here("raw", "force_plate", paste0(report_date, "_forceplate.csv"))
+
+if (!file.exists(gps_path)) warning("GPS file not found: ", gps_path)
+if (!file.exists(force_path)) warning("Force plate file not found: ", force_path)
+
+gps <- if (file.exists(gps_path)) read_csv(gps_path, show_col_types = FALSE) else tibble()
+force_plate <- if (file.exists(force_path)) read_csv(force_path, show_col_types = FALSE) else tibble()
+
+roster <- read_csv(here::here("ref", "athlete_roster.csv"), show_col_types = FALSE)
+```

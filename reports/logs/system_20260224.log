@@ -1,0 +1,143 @@
+[2026-02-24 10:25:59] [INFO] All required packages installed ✓ 
+[2026-02-24 10:25:59] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-24 10:25:59] [INFO] Root directory: C:/GitHub/waims-r-production/reports 
+[2026-02-24 10:25:59] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-02-24 10:25:59] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-24 10:25:59] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-24 10:25:59] [INFO] ACWR high risk: >1.5 
+[2026-02-24 10:25:59] [INFO] Sleep critical: <6 hours 
+[2026-02-24 10:25:59] [INFO] CMJ drop yellow: -8% 
+[2026-02-24 10:25:59] [INFO] Asymmetry red: >15% 
+[2026-02-24 10:25:59] [INFO] === SYSTEM READY === 
+[2026-02-24 10:27:49] [INFO] All required packages installed ✓ 
+[2026-02-24 10:27:49] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-24 10:27:49] [INFO] Root directory: C:/GitHub/waims-r-production/reports 
+[2026-02-24 10:27:49] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-02-24 10:27:49] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-24 10:27:49] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-24 10:27:49] [INFO] ACWR high risk: >1.5 
+[2026-02-24 10:27:49] [INFO] Sleep critical: <6 hours 
+[2026-02-24 10:27:49] [INFO] CMJ drop yellow: -8% 
+[2026-02-24 10:27:49] [INFO] Asymmetry red: >15% 
+[2026-02-24 10:27:49] [INFO] === SYSTEM READY === 
+[2026-02-24 10:38:08] [INFO] All required packages installed ✓ 
+[2026-02-24 10:38:08] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-24 10:38:08] [INFO] Root directory: C:/GitHub/waims-r-production/reports 
+[2026-02-24 10:38:08] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-02-24 10:38:08] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-24 10:38:08] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-24 10:38:08] [INFO] ACWR high risk: >1.5 
+[2026-02-24 10:38:08] [INFO] Sleep critical: <6 hours 
+[2026-02-24 10:38:08] [INFO] CMJ drop yellow: -8% 
+[2026-02-24 10:38:08] [INFO] Asymmetry red: >15% 
+[2026-02-24 10:38:08] [INFO] === SYSTEM READY === 
+[2026-02-24 10:57:26] [INFO] All required packages installed ✓ 
+[2026-02-24 10:57:26] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-24 10:57:26] [INFO] Root directory: C:/GitHub/waims-r-production/reports 
+[2026-02-24 10:57:26] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-02-24 10:57:26] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-24 10:57:26] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-24 10:57:26] [INFO] ACWR high risk: >1.5 
+[2026-02-24 10:57:26] [INFO] Sleep critical: <6 hours 
+[2026-02-24 10:57:26] [INFO] CMJ drop yellow: -8% 
+[2026-02-24 10:57:26] [INFO] Asymmetry red: >15% 
+[2026-02-24 10:57:26] [INFO] === SYSTEM READY === 
+[2026-02-24 11:00:35] [INFO] All required packages installed ✓ 
+[2026-02-24 11:00:35] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-24 11:00:35] [INFO] Root directory: C:/GitHub/waims-r-production/reports 
+[2026-02-24 11:00:35] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-02-24 11:00:35] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-24 11:00:35] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-24 11:00:35] [INFO] ACWR high risk: >1.5 
+[2026-02-24 11:00:35] [INFO] Sleep critical: <6 hours 
+[2026-02-24 11:00:35] [INFO] CMJ drop yellow: -8% 
+[2026-02-24 11:00:35] [INFO] Asymmetry red: >15% 
+[2026-02-24 11:00:35] [INFO] === SYSTEM READY === 
+[2026-02-24 11:04:58] [INFO] All required packages installed ✓ 
+[2026-02-24 11:04:58] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-24 11:04:58] [INFO] Root directory: C:/GitHub/waims-r-production/reports 
+[2026-02-24 11:04:58] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-02-24 11:04:58] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-24 11:04:58] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-24 11:04:58] [INFO] ACWR high risk: >1.5 
+[2026-02-24 11:04:58] [INFO] Sleep critical: <6 hours 
+[2026-02-24 11:04:58] [INFO] CMJ drop yellow: -8% 
+[2026-02-24 11:04:58] [INFO] Asymmetry red: >15% 
+[2026-02-24 11:04:58] [INFO] === SYSTEM READY === 
+[2026-02-24 11:14:22] [INFO] All required packages installed ✓ 
+[2026-02-24 11:14:22] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-24 11:14:22] [INFO] Root directory: C:/GitHub/waims-r-production/reports 
+[2026-02-24 11:14:22] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-02-24 11:14:22] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-24 11:14:22] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-24 11:14:22] [INFO] ACWR high risk: >1.5 
+[2026-02-24 11:14:22] [INFO] Sleep critical: <6 hours 
+[2026-02-24 11:14:22] [INFO] CMJ drop yellow: -8% 
+[2026-02-24 11:14:22] [INFO] Asymmetry red: >15% 
+[2026-02-24 11:14:22] [INFO] === SYSTEM READY === 
+[2026-02-24 11:14:38] [INFO] All required packages installed ✓ 
+[2026-02-24 11:14:38] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-24 11:14:38] [INFO] Root directory: C:/GitHub/waims-r-production/reports 
+[2026-02-24 11:14:38] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-02-24 11:14:38] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-24 11:14:38] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-24 11:14:38] [INFO] ACWR high risk: >1.5 
+[2026-02-24 11:14:38] [INFO] Sleep critical: <6 hours 
+[2026-02-24 11:14:38] [INFO] CMJ drop yellow: -8% 
+[2026-02-24 11:14:38] [INFO] Asymmetry red: >15% 
+[2026-02-24 11:14:38] [INFO] === SYSTEM READY === 
+[2026-02-24 11:14:53] [INFO] All required packages installed ✓ 
+[2026-02-24 11:14:53] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-24 11:14:53] [INFO] Root directory: C:/GitHub/waims-r-production/reports 
+[2026-02-24 11:14:53] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-02-24 11:14:53] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-24 11:14:53] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-24 11:14:53] [INFO] ACWR high risk: >1.5 
+[2026-02-24 11:14:53] [INFO] Sleep critical: <6 hours 
+[2026-02-24 11:14:53] [INFO] CMJ drop yellow: -8% 
+[2026-02-24 11:14:53] [INFO] Asymmetry red: >15% 
+[2026-02-24 11:14:53] [INFO] === SYSTEM READY === 
+[2026-02-24 11:29:51] [INFO] All required packages installed ✓ 
+[2026-02-24 11:29:51] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-24 11:29:51] [INFO] Root directory: C:/GitHub/waims-r-production/reports 
+[2026-02-24 11:29:51] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-02-24 11:29:51] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-24 11:29:51] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-24 11:29:51] [INFO] ACWR high risk: >1.5 
+[2026-02-24 11:29:51] [INFO] Sleep critical: <6 hours 
+[2026-02-24 11:29:51] [INFO] CMJ drop yellow: -8% 
+[2026-02-24 11:29:51] [INFO] Asymmetry red: >15% 
+[2026-02-24 11:29:51] [INFO] === SYSTEM READY === 
+[2026-02-24 11:34:59] [INFO] All required packages installed ✓ 
+[2026-02-24 11:34:59] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-24 11:34:59] [INFO] Root directory: C:/GitHub/waims-r-production/reports 
+[2026-02-24 11:34:59] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-02-24 11:34:59] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-24 11:34:59] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-24 11:34:59] [INFO] ACWR high risk: >1.5 
+[2026-02-24 11:34:59] [INFO] Sleep critical: <6 hours 
+[2026-02-24 11:34:59] [INFO] CMJ drop yellow: -8% 
+[2026-02-24 11:34:59] [INFO] Asymmetry red: >15% 
+[2026-02-24 11:34:59] [INFO] === SYSTEM READY === 
+[2026-02-24 11:36:12] [INFO] All required packages installed ✓ 
+[2026-02-24 11:36:12] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-24 11:36:12] [INFO] Root directory: C:/GitHub/waims-r-production/reports 
+[2026-02-24 11:36:12] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-02-24 11:36:12] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-24 11:36:12] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-24 11:36:12] [INFO] ACWR high risk: >1.5 
+[2026-02-24 11:36:12] [INFO] Sleep critical: <6 hours 
+[2026-02-24 11:36:12] [INFO] CMJ drop yellow: -8% 
+[2026-02-24 11:36:12] [INFO] Asymmetry red: >15% 
+[2026-02-24 11:36:12] [INFO] === SYSTEM READY === 
+[2026-02-24 11:39:06] [INFO] All required packages installed ✓ 
+[2026-02-24 11:39:06] [INFO] === WAIMS MONITORING SYSTEM === 
+[2026-02-24 11:39:06] [INFO] Root directory: C:/GitHub/waims-r-production/reports 
+[2026-02-24 11:39:06] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-02-24 11:39:06] [INFO] === THRESHOLDS (Research-Validated) === 
+[2026-02-24 11:39:06] [INFO] ACWR optimal: 0.8 - 1.3 
+[2026-02-24 11:39:06] [INFO] ACWR high risk: >1.5 
+[2026-02-24 11:39:06] [INFO] Sleep critical: <6 hours 
+[2026-02-24 11:39:06] [INFO] CMJ drop yellow: -8% 
+[2026-02-24 11:39:06] [INFO] Asymmetry red: >15% 
+[2026-02-24 11:39:06] [INFO] === SYSTEM READY === 
