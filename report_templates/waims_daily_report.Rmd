@@ -12,6 +12,7 @@ output:
 params:
   report_date: !r Sys.Date()
 ---
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 
@@ -34,41 +35,87 @@ kable_styled <- function(df, ...) {
   tbl
 }
 
-# Connect to warehouse
-con <- dbConnect(duckdb::duckdb(), "warehouse/waims_warehouse.duckdb")
-
 # Get report date
 report_date <- as.Date(params$report_date)
 
-# Load latest data
-latest_wellness <- dbGetQuery(con, sprintf("
-  SELECT * FROM wellness
-  WHERE CAST(date AS DATE) = DATE '%s'
-", report_date))
+# Connect to warehouse (with better path handling)
+db_path <- "warehouse/waims_warehouse.duckdb"
 
-latest_acwr <- dbGetQuery(con, sprintf("
-  SELECT * FROM acwr
-  WHERE CAST(date AS DATE) = DATE '%s'
-", report_date))
+# Check if database exists
+if (!file.exists(db_path)) {
+  stop("Database not found at: ", db_path, 
+       "\nPlease run your data pipeline first to create the database.")
+}
+
+# Connect
+con <- dbConnect(duckdb::duckdb(), db_path, read_only = FALSE)
+
+# Check if tables exist
+tables <- dbListTables(con)
+if (!"wellness" %in% tables) {
+  dbDisconnect(con, shutdown = TRUE)
+  stop("Wellness table not found in database. Available tables: ", 
+       paste(tables, collapse = ", "))
+}
+
+# Load latest data with error handling
+latest_wellness <- tryCatch({
+  dbGetQuery(con, sprintf("
+    SELECT * FROM wellness
+    WHERE CAST(date AS DATE) = DATE '%s'
+  ", report_date))
+}, error = function(e) {
+  # If no data for specific date, get latest available
+  dbGetQuery(con, "
+    SELECT * FROM wellness
+    WHERE date = (SELECT MAX(date) FROM wellness)
+  ")
+})
+
+latest_acwr <- tryCatch({
+  dbGetQuery(con, sprintf("
+    SELECT * FROM acwr
+    WHERE CAST(date AS DATE) = DATE '%s'
+  ", report_date))
+}, error = function(e) {
+  # Return empty data frame if table doesn't exist
+  data.frame(athlete_id = character(), acwr = numeric())
+})
 
 # Convert to numeric to avoid type issues
-latest_wellness <- latest_wellness %>%
-  mutate(
-    sleep_hours = as.numeric(sleep_hours),
-    soreness = as.numeric(soreness),
-    stress = as.numeric(stress),
-    mood = as.numeric(mood)
-  )
+if (nrow(latest_wellness) > 0) {
+  latest_wellness <- latest_wellness %>%
+    mutate(
+      sleep_hours = as.numeric(sleep_hours),
+      soreness = as.numeric(soreness),
+      stress = as.numeric(stress),
+      mood = as.numeric(mood),
+      position = as.character(position)
+    )
+} else {
+  stop("No wellness data found in database for ", report_date)
+}
 
-latest_acwr <- latest_acwr %>%
-  mutate(acwr = as.numeric(acwr))
+if (nrow(latest_acwr) > 0) {
+  latest_acwr <- latest_acwr %>%
+    mutate(acwr = as.numeric(acwr))
+}
 
-# Get historical data (14 days)
-wellness_14d <- dbGetQuery(con, "
-  SELECT * FROM wellness
-  WHERE date >= CURRENT_DATE - INTERVAL '14 days'
-  ORDER BY date
-")
+# Get historical data (14 days) with error handling
+wellness_14d <- tryCatch({
+  dbGetQuery(con, "
+    SELECT * FROM wellness
+    WHERE date >= CURRENT_DATE - INTERVAL '14 days'
+    ORDER BY date
+  ")
+}, error = function(e) {
+  # If interval syntax doesn't work, try alternative
+  dbGetQuery(con, sprintf("
+    SELECT * FROM wellness
+    WHERE date >= DATE '%s'
+    ORDER BY date
+  ", Sys.Date() - 14))
+})
 ```
 
 # Executive Summary
