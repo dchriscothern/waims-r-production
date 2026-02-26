@@ -39,7 +39,13 @@ kable_styled <- function(df, ...) {
 report_date <- as.Date(params$report_date)
 
 # Connect to warehouse (with better path handling)
-db_path <- "warehouse/waims_warehouse.duckdb"
+# Handle relative paths - .Rmd is in report_templates/
+db_path <- "../warehouse/waims_warehouse.duckdb"
+
+# If that doesn't work, try absolute path
+if (!file.exists(db_path)) {
+  db_path <- "warehouse/waims_warehouse.duckdb"
+}
 
 # Check if database exists
 if (!file.exists(db_path)) {
