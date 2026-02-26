@@ -1,331 +1,233 @@
 ---
 title: "WAIMS Daily Readiness"
+author: "Athlete Monitoring System"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
 format:
   html:
-    embed-resources: true
-    css: templates/daily_readiness.css
+    theme: flatly
+    toc: true
+    toc-location: left
+    code-fold: true
+    css: daily_readiness.css
 execute:
   echo: false
   warning: false
   message: false
-  execute-dir: project
 ---
 
-```{r}
-#| include: false
-library(here)
-library(readr)
-library(dplyr)
-library(magrittr)
-library(lubridate)
-library(stringr)
-library(tibble)
-library(htmltools)
-library(knitr)
+```{r setup}
+suppressPackageStartupMessages({
+  library(DBI)
+  library(duckdb)
+  library(dplyr)
+  library(tidyr)
+  library(ggplot2)
+  library(knitr)
+})
 
-# Hide config logging during render
-invisible(capture.output(source(here::here("scripts", "config.R"))))
+has_kableExtra <- requireNamespace("kableExtra", quietly = TRUE)
 
-# ---- Resolve latest date from wellness files ----
-wellness_files <- list.files(
-  here::here("raw", "wellness"),
-  pattern = "^\\d{8}_wellness\\.csv$",
-  full.names = TRUE
-)
-if (length(wellness_files) == 0) stop("No wellness files found in raw/wellness. Expected YYYYMMDD_wellness.csv")
-
-latest_wellness <- sort(wellness_files)[length(wellness_files)]
-report_date <- str_extract(basename(latest_wellness), "^\\d{8}")  # YYYYMMDD
-
-# ---- Load data ----
-wellness <- read_csv(latest_wellness, show_col_types = FALSE) %>%
-  mutate(date = as.Date(date))
-
-roster <- read_csv(here::here("ref", "athlete_roster.csv"), show_col_types = FALSE)
-
-# Optional GPS for "session difficulty" + position load bars
-gps_path <- here::here("raw", "gps", paste0(report_date, "_gps_practice.csv"))
-gps <- if (file.exists(gps_path)) read_csv(gps_path, show_col_types = FALSE) else tibble()
-
-if (nrow(gps) > 0 && "date" %in% names(gps)) {
-  gps <- gps %>% mutate(date = as.Date(date))
-}
-
-today_date <- max(wellness$date, na.rm = TRUE)
-
-# Basketball position grouping helper (PG/SG/G -> Guard, SF/PF/F -> Forward, C -> Center)
-pos_group <- function(pos) {
-  p <- toupper(trimws(as.character(pos)))
-  dplyr::case_when(
-    str_detect(p, "C") ~ "C",
-    str_detect(p, "F") ~ "F",
-    str_detect(p, "G") ~ "G",
-    TRUE ~ "UNK"
-  )
-}
-``` 
-
-```{r}
-#| include: false
-# ---- Build athlete-level readiness table (from wellness) ----
-# Expecting wellness columns: sleep_hours, soreness_0_10, fatigue_0_10
-# Expecting roster columns: athlete_id, display_name, position (optional)
-
-if (!"display_name" %in% names(roster)) roster$display_name <- roster$athlete_id
-if (!"position" %in% names(roster)) roster$position <- ""
-
-today <- wellness %>%
-  filter(date == today_date) %>%
-  left_join(roster %>% select(athlete_id, display_name, position), by = "athlete_id") %>%
-  mutate(
-    # Simple demo readiness score (swap with your WAIMS model)
-    readiness_score = pmax(0, pmin(100,
-      100 -
-        (fatigue_0_10 * 6) -
-        (soreness_0_10 * 4) -
-        pmax(0, (7.5 - sleep_hours)) * 10
-    )),
-    status = case_when(
-      readiness_score < 60 ~ "RED",
-      readiness_score < 80 ~ "YELLOW",
-      TRUE ~ "GREEN"
-    ),
-    status_class = case_when(
-      status == "RED" ~ "status-red",
-      status == "YELLOW" ~ "status-yellow",
-      TRUE ~ "status-green"
-    ),
-    pos_grp = pos_group(position),
-    flags = paste(
-      if_else(sleep_hours < 6.5, "⚠️ Poor Sleep", ""),
-      if_else(fatigue_0_10 >= 7, "⚠️ High Fatigue", ""),
-      if_else(soreness_0_10 >= 7, "⚠️ High Soreness", ""),
-      sep = " "
-    ) %>% str_squish()
-  ) %>%
-  arrange(match(status, c("RED","YELLOW","GREEN")), readiness_score)
-
-ready_n   <- sum(today$status == "GREEN", na.rm = TRUE)
-monitor_n <- sum(today$status == "YELLOW", na.rm = TRUE)
-needs_n   <- sum(today$status == "RED", na.rm = TRUE)
-avg_sleep <- round(mean(today$sleep_hours, na.rm = TRUE), 1)
-
-# ---- Session difficulty (prefer GPS; fallback to wellness composition) ----
-difficulty <- "Moderate"
-load_delta <- NA_real_
-duration_min <- NA_real_
-
-if (nrow(gps) > 0) {
-  # choose a load metric in order of preference
-  load_col <- dplyr::case_when(
-    "player_load" %in% names(gps) ~ "player_load",
-    "load" %in% names(gps) ~ "load",
-    "distance_m" %in% names(gps) ~ "distance_m",
-    "minutes" %in% names(gps) ~ "minutes",
-    TRUE ~ NA_character_
-  )
-
-  if (!is.na(load_col)) {
-    # If date exists, use it. Otherwise assume file is "today".
-    gps_today <- if ("date" %in% names(gps)) gps %>% filter(date == today_date) else gps
-    gps_hist  <- if ("date" %in% names(gps)) gps %>% filter(date < today_date) else tibble()
-
-    team_today <- sum(gps_today[[load_col]], na.rm = TRUE)
-    if (nrow(gps_hist) > 0 && "date" %in% names(gps_hist)) {
-      team_hist_7 <- gps_hist %>%
-        filter(date >= today_date - days(7)) %>%
-        group_by(date) %>%
-        summarize(v = sum(.data[[load_col]], na.rm = TRUE), .groups = "drop") %>%
-        summarize(avg = mean(v, na.rm = TRUE), .groups = "drop") %>%
-        pull(avg)
-      load_delta <- if (!is.na(team_hist_7) && team_hist_7 > 0) (team_today / team_hist_7) - 1 else NA_real_
-    }
-
-    # duration
-    if ("minutes" %in% names(gps_today)) duration_min <- round(mean(gps_today$minutes, na.rm = TRUE), 0)
-
-    # map delta to difficulty
-    if (!is.na(load_delta)) {
-      difficulty <- case_when(
-        load_delta <= -0.10 ~ "Easy",
-        load_delta <=  0.05 ~ "Light",
-        load_delta <=  0.15 ~ "Moderate",
-        load_delta <=  0.30 ~ "Hard",
-        TRUE                ~ "Very Hard"
+kable_safe <- function(df, caption = NULL, digits = NULL) {
+  kb <- knitr::kable(df, caption = caption, digits = digits)
+  if (has_kableExtra) {
+    kb <- kb |>
+      kableExtra::kable_styling(
+        bootstrap_options = c("striped", "hover"),
+        full_width = FALSE
       )
-    }
   }
+  kb
 }
 
-if (is.na(load_delta)) {
-  # fallback difficulty based on % flagged
-  frac_flagged <- (needs_n + monitor_n) / max(1, nrow(today))
-  difficulty <- case_when(
-    frac_flagged < 0.20 ~ "Easy",
-    frac_flagged < 0.35 ~ "Light",
-    frac_flagged < 0.55 ~ "Moderate",
-    frac_flagged < 0.75 ~ "Hard",
-    TRUE                ~ "Very Hard"
+db_path <- file.path("warehouse", "waims.duckdb")
+con <- dbConnect(duckdb::duckdb(), db_path, read_only = TRUE)
+on.exit(try(dbDisconnect(con, shutdown = TRUE), silent = TRUE), add = TRUE)
+
+tables <- dbListTables(con)
+
+safe_table <- function(tbl) {
+  if (!tbl %in% tables) return(NULL)
+  dbGetQuery(con, paste0("SELECT * FROM ", tbl))
+}
+
+wellness_all  <- safe_table("wellness")
+acwr_all      <- safe_table("acwr")
+readiness_all <- safe_table("readiness_scores")
+
+if (is.null(wellness_all) || nrow(wellness_all) == 0) {
+  stop("Missing or empty table: wellness. Check your ETL pipeline and DuckDB warehouse.")
+}
+if (!"date" %in% names(wellness_all)) stop("Table wellness must include a 'date' column.")
+
+wellness_all <- wellness_all %>% mutate(date = as.Date(date))
+latest_date <- max(wellness_all$date, na.rm = TRUE)
+
+latest_wellness <- wellness_all %>%
+  filter(date == latest_date) %>%
+  mutate(
+    athlete_id  = if ("athlete_id" %in% names(.)) athlete_id else NA,
+    position    = if ("position" %in% names(.)) position else NA,
+    sleep_hours = if ("sleep_hours" %in% names(.)) as.numeric(sleep_hours) else NA_real_,
+    soreness    = if ("soreness" %in% names(.)) as.numeric(soreness) else NA_real_,
+    stress      = if ("stress" %in% names(.)) as.numeric(stress) else NA_real_,
+    mood        = if ("mood" %in% names(.)) as.numeric(mood) else NA_real_
   )
+
+latest_acwr <- NULL
+if (!is.null(acwr_all) && nrow(acwr_all) > 0 && "date" %in% names(acwr_all)) {
+  acwr_all <- acwr_all %>% mutate(date = as.Date(date))
+  latest_acwr <- acwr_all %>%
+    filter(date == max(date, na.rm = TRUE)) %>%
+    mutate(
+      athlete_id = if ("athlete_id" %in% names(.)) athlete_id else NA,
+      acwr       = if ("acwr" %in% names(.)) as.numeric(acwr) else NA_real_
+    ) %>%
+    select(athlete_id, acwr)
 }
 
-# ---- Position bars (basketball: G/F/C) ----
-pos_summary <- NULL
-if (nrow(gps) > 0 && "athlete_id" %in% names(gps) && ("player_load" %in% names(gps) || "distance_m" %in% names(gps))) {
-  load_col2 <- if ("player_load" %in% names(gps)) "player_load" else "distance_m"
-  gps_today <- if ("date" %in% names(gps)) gps %>% filter(date == today_date) else gps
+if (is.null(latest_acwr)) {
+  latest_acwr <- tibble(athlete_id = latest_wellness$athlete_id, acwr = NA_real_)
+}
 
-  pos_summary <- gps_today %>%
-    left_join(roster %>% select(athlete_id, position), by = "athlete_id") %>%
-    mutate(pos_grp = pos_group(position)) %>%
-    group_by(pos_grp) %>%
-    summarize(avg_load = mean(.data[[load_col2]], na.rm = TRUE), .groups = "drop") %>%
-    filter(pos_grp != "UNK") %>%
-    arrange(desc(avg_load))
+risk_df <- latest_wellness %>%
+  left_join(latest_acwr, by = "athlete_id") %>%
+  mutate(
+    sleep_flag    = !is.na(sleep_hours) & sleep_hours < 6.5,
+    soreness_flag = !is.na(soreness) & soreness > 7,
+    stress_flag   = !is.na(stress) & stress > 7,
+    acwr_flag     = !is.na(acwr) & acwr > 1.5
+  )
 
-  pos_units <- if (load_col2 == "distance_m") "m" else ""
+poor_sleepers <- risk_df %>%
+  filter(sleep_flag) %>%
+  select(athlete_id, position, sleep_hours, soreness, stress) %>%
+  arrange(sleep_hours)
+
+high_risk <- risk_df %>%
+  filter(sleep_flag | soreness_flag | stress_flag | acwr_flag) %>%
+  mutate(
+    risk_factors = paste(
+      ifelse(sleep_flag, "Sleep", ""),
+      ifelse(soreness_flag, "Soreness", ""),
+      ifelse(stress_flag, "Stress", ""),
+      ifelse(acwr_flag, "ACWR", ""),
+      sep = ", "
+    ) |>
+      gsub(",\\s*,", ",", _) |>
+      gsub("^,\\s*|,\\s*$", "", _)
+  ) %>%
+  select(athlete_id, position, sleep_hours, soreness, stress, acwr, risk_factors) %>%
+  arrange(desc(acwr))
+
+if (!is.null(readiness_all) && nrow(readiness_all) > 0 &&
+    all(c("athlete_id","readiness_score") %in% names(readiness_all))) {
+  readiness_all <- readiness_all %>% mutate(date = as.Date(date))
+  latest_readiness <- readiness_all %>%
+    filter(date == max(date, na.rm = TRUE)) %>%
+    select(athlete_id, readiness_score) %>%
+    mutate(readiness_score = as.numeric(readiness_score))
 } else {
-  # fallback: avg readiness by position group
-  pos_summary <- today %>%
-    group_by(pos_grp) %>%
-    summarize(avg_load = mean(readiness_score, na.rm = TRUE), .groups = "drop") %>%
-    filter(pos_grp != "UNK") %>%
-    arrange(desc(avg_load))
-  pos_units <- "score"
+  latest_readiness <- latest_wellness %>%
+    mutate(
+      readiness_score =
+        (pmin(pmax(sleep_hours, 0), 10) / 8 * 30) +
+        ((10 - pmin(pmax(soreness, 0), 10)) / 10 * 30) +
+        ((10 - pmin(pmax(stress, 0), 10)) / 10 * 25) +
+        (pmin(pmax(mood, 0), 10) / 10 * 15)
+    ) %>%
+    select(athlete_id, readiness_score) %>%
+    mutate(readiness_score = as.numeric(readiness_score))
 }
 
-# ---- Key insights (basketball phrasing) ----
-insights <- c()
-insights <- c(insights, paste0("Flags: ", needs_n, " RED, ", monitor_n, " YELLOW (", nrow(today), " athletes)"))
-insights <- c(insights, paste0("Average sleep: ", avg_sleep, " hrs"))
-if (!is.na(duration_min)) insights <- c(insights, paste0("Avg session duration: ", duration_min, " min"))
-if (!is.na(load_delta)) insights <- c(insights, paste0("Session load vs last 7 days: ", sprintf("%+.0f%%", 100*load_delta)))
-insights <- head(insights, 4)
-
-# ---- Flags-only list (top 8) ----
-flags_tbl <- today %>%
-  filter(status %in% c("RED","YELLOW")) %>%
-  mutate(reason = if_else(flags == "", "Low composite readiness", flags)) %>%
-  transmute(
-    Athlete = paste0("<strong>", display_name, "</strong>"),
-    Pos = position,
-    Status = paste0("<span class='", status_class, "'>", status, "</span>"),
-    Why = reason,
-    Action = case_when(
-      status == "RED" ~ "Intervene (reduce load / medical check)",
-      TRUE            ~ "Monitor + adjust plan"
+readiness <- latest_readiness %>%
+  mutate(
+    status = case_when(
+      readiness_score >= 80 ~ "Ready",
+      readiness_score >= 60 ~ "Monitor",
+      TRUE ~ "At Risk"
     )
   ) %>%
-  slice_head(n = 8)
-``` 
+  arrange(readiness_score)
 
-```{r}
-#| echo: false
-#| output: asis
-# ---- PAGE HEADER + TOP KPIs + DIFFICULTY BAND + 2-COL PANELS ----
+total_athletes <- nrow(latest_wellness)
+avg_sleep <- round(mean(latest_wellness$sleep_hours, na.rm = TRUE), 1)
+poor_sleep_count <- nrow(poor_sleepers)
+high_risk_count  <- nrow(high_risk)
 
-band_levels <- c("Easy","Light","Moderate","Hard","Very Hard")
-band_colors <- c("#b7ff00","#6be400","#ffe066","#ff9f1c","#ff3b30")
-
-header_bar <- div(class = "topbar header",
-  h1(class="title", "🏀 Daily Readiness Report"),
-  p(class="subtitle", paste0(report_date, " | Off-Season Training"))
-)
-
-# If you kept the old .summary-cards styles, these cards will still work.
-cards <- div(class = "summary-cards",
-  div(class="card", h3("Ready to Train"),  div(class="value", ready_n),   p(style="color:#060;", "Full training cleared")),
-  div(class="card", h3("Monitor Closely"), div(class="value", monitor_n), p(style="color:#880;", "Modified training recommended")),
-  div(class="card", h3("Needs Attention"), div(class="value", needs_n),   p(style="color:#c00;", "Requires intervention")),
-  div(class="card", h3("Average Sleep"),   div(class="value", avg_sleep), p(style="color:#666;", "hours (target: 8+)"))
-)
-
-band <- div(class="band",
-  lapply(seq_along(band_levels), function(i){
-    cls <- paste("cell", if (band_levels[i] == difficulty) "active" else "")
-    div(class=cls, style=paste0("background:", band_colors[i], ";"), band_levels[i])
-  })
-)
-
-# Position bars (G/F/C)
-if (is.null(pos_summary) || nrow(pos_summary) == 0) {
-  pos_panel <- div(class="panel", h2("Avg load by position"), "No position summary available.")
-} else {
-  maxv <- max(pos_summary$avg_load, na.rm = TRUE)
-  bars <- tags$div(
-    lapply(seq_len(nrow(pos_summary)), function(i){
-      pct <- if (maxv > 0) round(100 * pos_summary$avg_load[i] / maxv) else 0
-      tags$div(style="display:flex; align-items:center; gap:10px; margin:8px 0;",
-        tags$div(style="width:36px; font-weight:800;", pos_summary$pos_grp[i]),
-        tags$div(style=paste0("flex:1; height:18px; background:#ffd166; border-radius:6px; width:", pct, "%;")),
-        tags$div(style="width:70px; text-align:right; font-weight:800;",
-                 paste0(round(pos_summary$avg_load[i], 1), ifelse(pos_units == "", "", paste0(" ", pos_units))))
-      )
-    })
-  )
-  pos_panel <- div(class="panel",
-    h2("Position overview (G/F/C)"),
-    tags$p(strong("Session difficulty: "), difficulty),
-    band,
-    bars
-  )
-}
-
-# Key insights panel
-ins_panel <- div(class="panel",
-  h2("Key insights"),
-  tags$ul(lapply(insights, tags$li))
-)
-
-# Flags panel (only if flags exist)
-flags_panel <- if (nrow(flags_tbl) == 0) {
-  div(class="panel",
-    h2("Flags"),
-    "No RED/YELLOW athletes by current thresholds."
-  )
-} else {
-  flags_html <- knitr::kable(flags_tbl, format="html", escape = FALSE)
-  div(class="panel",
-    h2("Flags (action list)"),
-    HTML(flags_html)
-  )
-}
-
-layout <- div(class="page",
-  header_bar,
-  cards,
-  div(class="grid", pos_panel, div(ins_panel, flags_panel))
-)
-
-knitr::asis_output(as.character(layout))
+ready_n   <- sum(readiness$status == "Ready", na.rm = TRUE)
+monitor_n <- sum(readiness$status == "Monitor", na.rm = TRUE)
+risk_n    <- sum(readiness$status == "At Risk", na.rm = TRUE)
 ```
 
+## Executive Summary
+
+**Report Date:** `r format(latest_date, "%B %d, %Y")`  
+**Athletes Monitored:** `r total_athletes`  
+**Average Sleep:** `r avg_sleep` hours  
+**Poor Sleep Flags:** `r poor_sleep_count`  
+**High Risk Flags:** `r high_risk_count`  
+
+## Quick Insights {.panel-tabset}
+
+### Sleep Alert
+
 ```{r}
-#| echo: false
-#| output: asis
-# ---- PLAYER READINESS TABLE (FULL ROSTER) ----
-tbl <- today %>%
-  transmute(
-    Player   = paste0("<strong>", display_name, "</strong>"),
-    Position = position,
-    Status   = paste0("<span class='", status_class, "'>", status, "</span>"),
-    Score    = paste0(round(readiness_score), "/100"),
-    Sleep    = paste0(round(sleep_hours, 1), " hrs"),
-    Soreness = paste0(soreness_0_10, "/10"),
-    Fatigue  = paste0(fatigue_0_10, "/10"),
-    Flags    = if_else(flags == "", "", paste0("<span class='flag'>", flags, "</span>"))
+if (poor_sleep_count > 0) {
+  cat("Poor sleep flags today:", poor_sleep_count, "\n\n")
+  kable_safe(
+    poor_sleepers,
+    caption = "Athletes with Sleep < 6.5 hours",
+    digits = 1
+  )
+} else {
+  cat("All athletes reported at least 6.5 hours of sleep.")
+}
+```
+
+### High Risk
+
+```{r}
+if (high_risk_count > 0) {
+  cat("Athletes with one or more risk flags:", high_risk_count, "\n\n")
+  kable_safe(
+    high_risk,
+    caption = "High Risk Flags (Sleep, Soreness, Stress, ACWR)",
+    digits = 2
+  )
+} else {
+  cat("No elevated risk flags based on current thresholds.")
+}
+```
+
+### Readiness
+
+```{r}
+cat("Team readiness summary\n\n")
+cat("Ready:", ready_n, "  Monitor:", monitor_n, "  At Risk:", risk_n, "\n\n")
+
+kable_safe(
+  readiness,
+  caption = "Daily Readiness Scores",
+  digits = 1
+)
+```
+
+## Optional Trends
+
+```{r}
+wellness_14d <- wellness_all %>%
+  filter(date >= (latest_date - 13)) %>%
+  arrange(date) %>%
+  mutate(
+    sleep_hours = if ("sleep_hours" %in% names(.)) as.numeric(sleep_hours) else NA_real_,
+    soreness    = if ("soreness" %in% names(.)) as.numeric(soreness) else NA_real_
   )
 
-table_html <- knitr::kable(tbl, format="html", escape = FALSE)
-
-footer <- div(class="footer",
-  p(tags$strong("WAIMS Monitoring System"), " | Basketball monitoring one-pager"),
-  p(paste0("Generated: ", format(Sys.time(), "%Y-%m-%d %H:%M:%S")))
-)
-
-knitr::asis_output(as.character(tagList(
-  tags$h2(style="margin: 26px 0 14px 0;", "Player Readiness Status"),
-  HTML(table_html),
-  footer
-)))
+ggplot(wellness_14d, aes(x = date, y = sleep_hours, group = athlete_id)) +
+  geom_line(alpha = 0.25) +
+  geom_smooth(aes(group = 1), method = "loess", se = TRUE, color = "#2E86AB") +
+  geom_hline(yintercept = 7, linetype = "dashed", color = "orange") +
+  geom_hline(yintercept = 8, linetype = "dashed", color = "darkgreen") +
+  labs(title = "Sleep Trends (Last 14 Days)", x = NULL, y = "Sleep Hours") +
+  theme_minimal()
 ```
