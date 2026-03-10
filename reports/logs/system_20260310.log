@@ -11,3 +11,81 @@
 [2026-03-10 12:43:24] [INFO] ACWR: CONTEXTUAL FLAG ONLY — not scored [Impellizzeri 2020, 2025 MA] 
 [2026-03-10 12:43:24] [INFO]   Display zones: 0.8–1.3 optimal | >1.5 flag 
 [2026-03-10 12:43:24] [INFO] === SYSTEM READY === 
+[2026-03-10 13:04:58] [WARNING] Missing packages: wehoop 
+[2026-03-10 13:04:58] [WARNING] Install: install.packages(c('tidyverse','duckdb','DBI','lubridate','janitor','glue','fs','slider','quarto','gt','wehoop')) 
+[2026-03-10 13:04:58] [INFO] === WAIMS-R MONITORING SYSTEM v1.1.0 === 
+[2026-03-10 13:04:58] [INFO] Root: C:/GitHub/waims-r-production/reports 
+[2026-03-10 13:04:58] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-03-10 13:04:58] [INFO] Season: 2026 | Start: 2026-05-09 
+[2026-03-10 13:04:58] [INFO] === THRESHOLDS (Evidence-Based) === 
+[2026-03-10 13:04:58] [INFO] Sleep critical: <6 hrs [Tier 1 — Watson 2020, Saw 2016] 
+[2026-03-10 13:04:58] [INFO] CMJ drop yellow: -8% from baseline [Tier 1 — Cormack 2008, Labban 2024] 
+[2026-03-10 13:04:58] [INFO] Asymmetry red: >15% [Tier 2 — Bishop 2018] 
+[2026-03-10 13:04:58] [INFO] ACWR: CONTEXTUAL FLAG ONLY — not scored [Impellizzeri 2020, 2025 MA] 
+[2026-03-10 13:04:58] [INFO]   Display zones: 0.8–1.3 optimal | >1.5 flag 
+[2026-03-10 13:04:58] [INFO] === SYSTEM READY === 
+[2026-03-10 13:19:18] [WARNING] Missing packages: wehoop 
+[2026-03-10 13:19:18] [WARNING] Install: install.packages(c('tidyverse','duckdb','DBI','lubridate','janitor','glue','fs','slider','quarto','gt','wehoop')) 
+[2026-03-10 13:19:18] [INFO] === WAIMS-R MONITORING SYSTEM v1.1.0 === 
+[2026-03-10 13:19:18] [INFO] Root: C:/GitHub/waims-r-production/reports 
+[2026-03-10 13:19:18] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-03-10 13:19:18] [INFO] Season: 2026 | Start: 2026-05-09 
+[2026-03-10 13:19:18] [INFO] === THRESHOLDS (Evidence-Based) === 
+[2026-03-10 13:19:18] [INFO] Sleep critical: <6 hrs [Tier 1 — Watson 2020, Saw 2016] 
+[2026-03-10 13:19:18] [INFO] CMJ drop yellow: -8% from baseline [Tier 1 — Cormack 2008, Labban 2024] 
+[2026-03-10 13:19:18] [INFO] Asymmetry red: >15% [Tier 2 — Bishop 2018] 
+[2026-03-10 13:19:18] [INFO] ACWR: CONTEXTUAL FLAG ONLY — not scored [Impellizzeri 2020, 2025 MA] 
+[2026-03-10 13:19:18] [INFO]   Display zones: 0.8–1.3 optimal | >1.5 flag 
+[2026-03-10 13:19:18] [INFO] === SYSTEM READY === 
+[2026-03-10 13:24:34] [WARNING] Missing packages: wehoop 
+[2026-03-10 13:24:34] [WARNING] Install: install.packages(c('tidyverse','duckdb','DBI','lubridate','janitor','glue','fs','slider','quarto','gt','wehoop')) 
+[2026-03-10 13:24:34] [INFO] === WAIMS-R MONITORING SYSTEM v1.1.0 === 
+[2026-03-10 13:24:34] [INFO] Root: C:/GitHub/waims-r-production/reports 
+[2026-03-10 13:24:34] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-03-10 13:24:34] [INFO] Season: 2026 | Start: 2026-05-09 
+[2026-03-10 13:24:34] [INFO] === THRESHOLDS (Evidence-Based) === 
+[2026-03-10 13:24:34] [INFO] Sleep critical: <6 hrs [Tier 1 — Watson 2020, Saw 2016] 
+[2026-03-10 13:24:34] [INFO] CMJ drop yellow: -8% from baseline [Tier 1 — Cormack 2008, Labban 2024] 
+[2026-03-10 13:24:34] [INFO] Asymmetry red: >15% [Tier 2 — Bishop 2018] 
+[2026-03-10 13:24:34] [INFO] ACWR: CONTEXTUAL FLAG ONLY — not scored [Impellizzeri 2020, 2025 MA] 
+[2026-03-10 13:24:34] [INFO]   Display zones: 0.8–1.3 optimal | >1.5 flag 
+[2026-03-10 13:24:34] [INFO] === SYSTEM READY === 
+[2026-03-10 13:25:23] [WARNING] Missing packages: wehoop 
+[2026-03-10 13:25:23] [WARNING] Install: install.packages(c('tidyverse','duckdb','DBI','lubridate','janitor','glue','fs','slider','quarto','gt','wehoop')) 
+[2026-03-10 13:25:23] [INFO] === WAIMS-R MONITORING SYSTEM v1.1.0 === 
+[2026-03-10 13:25:23] [INFO] Root: C:/GitHub/waims-r-production/reports 
+[2026-03-10 13:25:23] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-03-10 13:25:23] [INFO] Season: 2026 | Start: 2026-05-09 
+[2026-03-10 13:25:23] [INFO] === THRESHOLDS (Evidence-Based) === 
+[2026-03-10 13:25:23] [INFO] Sleep critical: <6 hrs [Tier 1 — Watson 2020, Saw 2016] 
+[2026-03-10 13:25:23] [INFO] CMJ drop yellow: -8% from baseline [Tier 1 — Cormack 2008, Labban 2024] 
+[2026-03-10 13:25:23] [INFO] Asymmetry red: >15% [Tier 2 — Bishop 2018] 
+[2026-03-10 13:25:23] [INFO] ACWR: CONTEXTUAL FLAG ONLY — not scored [Impellizzeri 2020, 2025 MA] 
+[2026-03-10 13:25:23] [INFO]   Display zones: 0.8–1.3 optimal | >1.5 flag 
+[2026-03-10 13:25:23] [INFO] === SYSTEM READY === 
+[2026-03-10 13:28:47] [WARNING] Missing packages: wehoop 
+[2026-03-10 13:28:47] [WARNING] Install: install.packages(c('tidyverse','duckdb','DBI','lubridate','janitor','glue','fs','slider','quarto','gt','wehoop')) 
+[2026-03-10 13:28:47] [INFO] === WAIMS-R MONITORING SYSTEM v1.1.0 === 
+[2026-03-10 13:28:47] [INFO] Root: C:/GitHub/waims-r-production/reports 
+[2026-03-10 13:28:47] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-03-10 13:28:47] [INFO] Season: 2026 | Start: 2026-05-09 
+[2026-03-10 13:28:47] [INFO] === THRESHOLDS (Evidence-Based) === 
+[2026-03-10 13:28:47] [INFO] Sleep critical: <6 hrs [Tier 1 — Watson 2020, Saw 2016] 
+[2026-03-10 13:28:47] [INFO] CMJ drop yellow: -8% from baseline [Tier 1 — Cormack 2008, Labban 2024] 
+[2026-03-10 13:28:47] [INFO] Asymmetry red: >15% [Tier 2 — Bishop 2018] 
+[2026-03-10 13:28:47] [INFO] ACWR: CONTEXTUAL FLAG ONLY — not scored [Impellizzeri 2020, 2025 MA] 
+[2026-03-10 13:28:47] [INFO]   Display zones: 0.8–1.3 optimal | >1.5 flag 
+[2026-03-10 13:28:47] [INFO] === SYSTEM READY === 
+[2026-03-10 13:29:32] [WARNING] Missing packages: wehoop 
+[2026-03-10 13:29:32] [WARNING] Install: install.packages(c('tidyverse','duckdb','DBI','lubridate','janitor','glue','fs','slider','quarto','gt','wehoop')) 
+[2026-03-10 13:29:32] [INFO] === WAIMS-R MONITORING SYSTEM v1.1.0 === 
+[2026-03-10 13:29:32] [INFO] Root: C:/GitHub/waims-r-production/reports 
+[2026-03-10 13:29:32] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-03-10 13:29:32] [INFO] Season: 2026 | Start: 2026-05-09 
+[2026-03-10 13:29:32] [INFO] === THRESHOLDS (Evidence-Based) === 
+[2026-03-10 13:29:32] [INFO] Sleep critical: <6 hrs [Tier 1 — Watson 2020, Saw 2016] 
+[2026-03-10 13:29:32] [INFO] CMJ drop yellow: -8% from baseline [Tier 1 — Cormack 2008, Labban 2024] 
+[2026-03-10 13:29:32] [INFO] Asymmetry red: >15% [Tier 2 — Bishop 2018] 
+[2026-03-10 13:29:32] [INFO] ACWR: CONTEXTUAL FLAG ONLY — not scored [Impellizzeri 2020, 2025 MA] 
+[2026-03-10 13:29:32] [INFO]   Display zones: 0.8–1.3 optimal | >1.5 flag 
+[2026-03-10 13:29:32] [INFO] === SYSTEM READY === 
