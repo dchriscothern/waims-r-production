@@ -319,7 +319,7 @@ tbl <- today %>%
 table_html <- knitr::kable(tbl, format="html", escape = FALSE)
 
 footer <- div(class="footer",
-  p(tags$strong("WAIMS Monitoring System"), " | Basketball monitoring one-pager"),
+  p(tags$strong("WAIMS Monitoring System"), " | Daily Readiness Brief"),
   p(paste0("Generated: ", format(Sys.time(), "%Y-%m-%d %H:%M:%S")))
 )
 

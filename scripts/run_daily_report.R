@@ -17,3 +17,4 @@ rmarkdown::render(
 
 cat("\n✅ Report generated successfully!\n")
 cat("   Output: reports/WAIMS_Daily_", format(report_date, "%Y%m%d"), ".html\n", sep = "")
+

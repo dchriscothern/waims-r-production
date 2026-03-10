@@ -1,0 +1,41 @@
+[2026-03-05 00:14:15] [WARNING] Missing packages: wehoop 
+[2026-03-05 00:14:15] [WARNING] Install: install.packages(c('tidyverse','duckdb','DBI','lubridate','janitor','glue','fs','slider','quarto','gt','wehoop')) 
+[2026-03-05 00:14:15] [INFO] === WAIMS-R MONITORING SYSTEM v1.1.0 === 
+[2026-03-05 00:14:15] [INFO] Root: C:/GitHub/waims-r-production 
+[2026-03-05 00:14:15] [INFO] Database: C:/GitHub/waims-r-production/warehouse/waims.duckdb 
+[2026-03-05 00:14:15] [INFO] Season: 2026 | Start: 2026-05-09 
+[2026-03-05 00:14:15] [INFO] === THRESHOLDS (Evidence-Based) === 
+[2026-03-05 00:14:15] [INFO] Sleep critical: <6 hrs [Tier 1 — Watson 2020, Saw 2016] 
+[2026-03-05 00:14:15] [INFO] CMJ drop yellow: -8% from baseline [Tier 1 — Cormack 2008, Labban 2024] 
+[2026-03-05 00:14:15] [INFO] Asymmetry red: >15% [Tier 2 — Bishop 2018] 
+[2026-03-05 00:14:15] [INFO] ACWR: CONTEXTUAL FLAG ONLY — not scored [Impellizzeri 2020, 2025 MA] 
+[2026-03-05 00:14:15] [INFO]   Display zones: 0.8–1.3 optimal | >1.5 flag 
+[2026-03-05 00:14:15] [INFO] === SYSTEM READY === 
+[2026-03-05 00:14:15] [INFO] === GENERATING SAMPLE DATA === 
+[2026-03-05 00:14:15] [INFO] Current date: 2026-03-05 
+[2026-03-05 00:14:16] [INFO] Context: Off-season training (2025 season completed) 
+[2026-03-05 00:14:18] [INFO] Scenario: Off-season training (Dec 2025 - Feb 2026) 
+[2026-03-05 00:14:19] [INFO] Created roster: 12 players 
+[2026-03-05 00:14:20] [INFO] Date range: 2025-12-01 to 2026-03-05 (95 days) 
+[2026-03-05 00:14:21] [INFO] Generating GPS/practice load data... 
+[2026-03-05 00:14:23] [INFO] Created: C:/GitHub/waims-r-production/raw/gps/20260305_gps_practice.csv (1140 records) 
+[2026-03-05 00:14:24] [INFO] Generating wellness data... 
+[2026-03-05 00:14:26] [INFO] Created: C:/GitHub/waims-r-production/raw/wellness/20260305_wellness.csv (1140 records) 
+[2026-03-05 00:14:26] [INFO] Generating force plate data... 
+[2026-03-05 00:14:29] [INFO] Created: C:/GitHub/waims-r-production/raw/force_plate/20260305_forceplate.csv (168 records) 
+[2026-03-05 00:14:30] [INFO] Generating wearable data... 
+[2026-03-05 00:14:32] [INFO] Created: C:/GitHub/waims-r-production/raw/wearables/20260305_wearables.csv (1140 records) 
+[2026-03-05 00:14:33] [INFO] === SAMPLE DATA GENERATION COMPLETE === 
+[2026-03-05 00:14:33] [INFO] Scenario: OFF_SEASON 
+[2026-03-05 00:14:34] [INFO] Date range: 2025-12-01 to 2026-03-05 (95 days) 
+[2026-03-05 00:14:34] [INFO] Roster: 12 players 
+[2026-03-05 00:14:34] [INFO] GPS records: 1140 
+[2026-03-05 00:14:35] [INFO] Wellness records: 1140 
+[2026-03-05 00:14:36] [INFO] Force plate records: 168 
+[2026-03-05 00:14:37] [INFO] Wearable records: 1140 
+[2026-03-05 00:14:37] [INFO]  
+[2026-03-05 00:14:37] [INFO] CONTEXT: February 2026 - Off-season training 
+[2026-03-05 00:14:38] [INFO] - 2025 season completed (May-October 2025) 
+[2026-03-05 00:14:38] [INFO] - Current: Off-season strength & conditioning 
+[2026-03-05 00:14:38] [INFO] - Next: 2026 season starts May 2026 
+[2026-03-05 00:14:39] [INFO]  

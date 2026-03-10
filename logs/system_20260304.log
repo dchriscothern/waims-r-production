@@ -1,0 +1,56 @@
+[2026-03-04 13:07:18] [WARNING] Missing packages: wehoop 
+[2026-03-04 13:07:18] [WARNING] Install: install.packages(c('tidyverse','duckdb','DBI','lubridate','janitor','glue','fs','slider','quarto','gt','wehoop')) 
+[2026-03-04 13:07:18] [INFO] === WAIMS-R MONITORING SYSTEM v1.1.0 === 
+[2026-03-04 13:07:18] [INFO] Root: C:/GitHub/waims-r-production 
+[2026-03-04 13:07:18] [INFO] Database: C:/GitHub/waims-r-production/warehouse/waims.duckdb 
+[2026-03-04 13:07:18] [INFO] Season: 2026 | Start: 2026-05-09 
+[2026-03-04 13:07:18] [INFO] === THRESHOLDS (Evidence-Based) === 
+[2026-03-04 13:07:18] [INFO] Sleep critical: <6 hrs [Tier 1 — Watson 2020, Saw 2016] 
+[2026-03-04 13:07:18] [INFO] CMJ drop yellow: -8% from baseline [Tier 1 — Cormack 2008, Labban 2024] 
+[2026-03-04 13:07:18] [INFO] Asymmetry red: >15% [Tier 2 — Bishop 2018] 
+[2026-03-04 13:07:18] [INFO] ACWR: CONTEXTUAL FLAG ONLY — not scored [Impellizzeri 2020, 2025 MA] 
+[2026-03-04 13:07:18] [INFO]   Display zones: 0.8–1.3 optimal | >1.5 flag 
+[2026-03-04 13:07:18] [INFO] === SYSTEM READY === 
+[2026-03-04 13:07:22] [INFO]    DALLAS WINGS MONITORING SYSTEM 
+[2026-03-04 23:21:16] [WARNING] Missing packages: wehoop 
+[2026-03-04 23:21:16] [WARNING] Install: install.packages(c('tidyverse','duckdb','DBI','lubridate','janitor','glue','fs','slider','quarto','gt','wehoop')) 
+[2026-03-04 23:21:16] [INFO] === WAIMS-R MONITORING SYSTEM v1.1.0 === 
+[2026-03-04 23:21:16] [INFO] Root: C:/GitHub/waims-r-production 
+[2026-03-04 23:21:16] [INFO] Database: C:/GitHub/waims-r-production/warehouse/waims.duckdb 
+[2026-03-04 23:21:16] [INFO] Season: 2026 | Start: 2026-05-09 
+[2026-03-04 23:21:16] [INFO] === THRESHOLDS (Evidence-Based) === 
+[2026-03-04 23:21:16] [INFO] Sleep critical: <6 hrs [Tier 1 — Watson 2020, Saw 2016] 
+[2026-03-04 23:21:16] [INFO] CMJ drop yellow: -8% from baseline [Tier 1 — Cormack 2008, Labban 2024] 
+[2026-03-04 23:21:16] [INFO] Asymmetry red: >15% [Tier 2 — Bishop 2018] 
+[2026-03-04 23:21:16] [INFO] ACWR: CONTEXTUAL FLAG ONLY — not scored [Impellizzeri 2020, 2025 MA] 
+[2026-03-04 23:21:16] [INFO]   Display zones: 0.8–1.3 optimal | >1.5 flag 
+[2026-03-04 23:21:16] [INFO] === SYSTEM READY === 
+[2026-03-04 23:21:18] [INFO] === GENERATING SAMPLE DATA === 
+[2026-03-04 23:21:18] [INFO] Current date: 2026-03-04 
+[2026-03-04 23:21:19] [INFO] Context: Off-season training (2025 season completed) 
+[2026-03-04 23:21:21] [INFO] Scenario: Off-season training (Dec 2025 - Feb 2026) 
+[2026-03-04 23:21:23] [INFO] Created roster: 12 players 
+[2026-03-04 23:21:25] [INFO] Date range: 2025-12-01 to 2026-03-04 (94 days) 
+[2026-03-04 23:21:25] [INFO] Generating GPS/practice load data... 
+[2026-03-04 23:21:27] [INFO] Created: C:/GitHub/waims-r-production/raw/gps/20260304_gps_practice.csv (1128 records) 
+[2026-03-04 23:21:28] [INFO] Generating wellness data... 
+[2026-03-04 23:21:31] [INFO] Created: C:/GitHub/waims-r-production/raw/wellness/20260304_wellness.csv (1128 records) 
+[2026-03-04 23:21:32] [INFO] Generating force plate data... 
+[2026-03-04 23:21:34] [INFO] Created: C:/GitHub/waims-r-production/raw/force_plate/20260304_forceplate.csv (168 records) 
+[2026-03-04 23:21:34] [INFO] Generating wearable data... 
+[2026-03-04 23:21:36] [INFO] Created: C:/GitHub/waims-r-production/raw/wearables/20260304_wearables.csv (1128 records) 
+[2026-03-04 23:21:36] [INFO] === SAMPLE DATA GENERATION COMPLETE === 
+[2026-03-04 23:21:36] [INFO] Scenario: OFF_SEASON 
+[2026-03-04 23:21:37] [INFO] Date range: 2025-12-01 to 2026-03-04 (94 days) 
+[2026-03-04 23:21:37] [INFO] Roster: 12 players 
+[2026-03-04 23:21:37] [INFO] GPS records: 1128 
+[2026-03-04 23:21:37] [INFO] Wellness records: 1128 
+[2026-03-04 23:21:38] [INFO] Force plate records: 168 
+[2026-03-04 23:21:38] [INFO] Wearable records: 1128 
+[2026-03-04 23:21:38] [INFO]  
+[2026-03-04 23:21:38] [INFO] CONTEXT: February 2026 - Off-season training 
+[2026-03-04 23:21:39] [INFO] - 2025 season completed (May-October 2025) 
+[2026-03-04 23:21:39] [INFO] - Current: Off-season strength & conditioning 
+[2026-03-04 23:21:39] [INFO] - Next: 2026 season starts May 2026 
+[2026-03-04 23:21:39] [INFO]  
+[2026-03-04 23:21:39] [INFO] Ready to run: source('scripts/run_daily.R') 
