@@ -1,0 +1,26 @@
+[2026-03-11 14:52:11] [WARNING] Missing packages: wehoop 
+[2026-03-11 14:52:11] [WARNING] Install: install.packages(c('tidyverse','duckdb','DBI','lubridate','janitor','glue','fs','slider','quarto','gt','wehoop')) 
+[2026-03-11 14:52:11] [INFO] === WAIMS-R MONITORING SYSTEM v1.1.0 === 
+[2026-03-11 14:52:11] [INFO] Root: C:/GitHub/waims-r-production/reports 
+[2026-03-11 14:52:11] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-03-11 14:52:11] [INFO] Season: 2026 | Start: 2026-05-09 
+[2026-03-11 14:52:11] [INFO] === THRESHOLDS (Evidence-Based) === 
+[2026-03-11 14:52:11] [INFO] Sleep critical: <6 hrs [Tier 1 — Watson 2020, Saw 2016] 
+[2026-03-11 14:52:11] [INFO] CMJ drop yellow: -8% from baseline [Tier 1 — Cormack 2008, Labban 2024] 
+[2026-03-11 14:52:11] [INFO] Asymmetry red: >15% [Tier 2 — Bishop 2018] 
+[2026-03-11 14:52:11] [INFO] ACWR: CONTEXTUAL FLAG ONLY — not scored [Impellizzeri 2020, 2025 MA] 
+[2026-03-11 14:52:11] [INFO]   Display zones: 0.8–1.3 optimal | >1.5 flag 
+[2026-03-11 14:52:11] [INFO] === SYSTEM READY === 
+[2026-03-11 15:18:38] [WARNING] Missing packages: wehoop 
+[2026-03-11 15:18:38] [WARNING] Install: install.packages(c('tidyverse','duckdb','DBI','lubridate','janitor','glue','fs','slider','quarto','gt','wehoop')) 
+[2026-03-11 15:18:38] [INFO] === WAIMS-R MONITORING SYSTEM v1.1.0 === 
+[2026-03-11 15:18:38] [INFO] Root: C:/GitHub/waims-r-production/reports 
+[2026-03-11 15:18:38] [INFO] Database: C:/GitHub/waims-r-production/reports/warehouse/waims.duckdb 
+[2026-03-11 15:18:38] [INFO] Season: 2026 | Start: 2026-05-09 
+[2026-03-11 15:18:38] [INFO] === THRESHOLDS (Evidence-Based) === 
+[2026-03-11 15:18:38] [INFO] Sleep critical: <6 hrs [Tier 1 — Watson 2020, Saw 2016] 
+[2026-03-11 15:18:38] [INFO] CMJ drop yellow: -8% from baseline [Tier 1 — Cormack 2008, Labban 2024] 
+[2026-03-11 15:18:38] [INFO] Asymmetry red: >15% [Tier 2 — Bishop 2018] 
+[2026-03-11 15:18:38] [INFO] ACWR: CONTEXTUAL FLAG ONLY — not scored [Impellizzeri 2020, 2025 MA] 
+[2026-03-11 15:18:38] [INFO]   Display zones: 0.8–1.3 optimal | >1.5 flag 
+[2026-03-11 15:18:38] [INFO] === SYSTEM READY === 

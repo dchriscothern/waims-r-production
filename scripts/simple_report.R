@@ -130,7 +130,18 @@ calculate_readiness_r <- function(
 # 3. CALCULATE TODAY'S READINESS
 # ==============================================================================
 
-today <- max(wellness$date)
+# Ensure date is a proper Date
+wellness$date <- if (is.numeric(wellness$date)) {
+  as.Date(wellness$date, origin = "1970-01-01")
+} else {
+  as.Date(wellness$date)
+}
+
+# Data date is the latest date available in the synthetic dataset
+data_date <- max(wellness$date, na.rm = TRUE)
+
+# Report date is when you generated the file
+report_date <- Sys.Date()
 
 # Join force plate (most recent test per athlete, not necessarily today)
 # The R data generator exports force plate with force_plate_id (FP_001...)
@@ -156,7 +167,7 @@ latest_fp <- if (nrow(force_plate) > 0) {
 }
 
 readiness <- wellness %>%
-  filter(date == today) %>%
+  filter(date == data_date) %>%
   left_join(roster %>% select(athlete_id, display_name, position, role_tier),
             by = "athlete_id") %>%
   left_join(latest_fp, by = "athlete_id") %>%
@@ -294,8 +305,8 @@ html_content <- glue('
 </head>
 <body>
     <div class="header">
-        <h1>🏀 Daily Readiness Report</h1>
-        <p>{format(today, "%A, %B %d, %Y")} &nbsp;|&nbsp; WAIMS-R Monitoring System</p>
+        <h1> Daily Readiness Report</h1>
+        <p>Generated {format(report_date, "%A, %B %d, %Y")} | Data as of {format(data_date, "%Y-%m-%d")} | WAIMS-R Monitoring System</p>
     </div>
 
     <div class="summary-grid">
@@ -392,7 +403,7 @@ html_content <- paste0(html_content, glue('
 
 dir.create("reports/output", showWarnings = FALSE, recursive = TRUE)
 
-report_file <- glue("reports/output/daily_readiness_{format(today, '%Y%m%d')}.html")
+report_file <- glue("reports/output/daily_readiness_{format(report_date, '%Y%m%d')}.html")
 writeLines(html_content, report_file)
 
 cat(glue("✓ Report saved: {report_file}\n"))
@@ -408,3 +419,4 @@ if (.Platform$OS.type == "windows") {
 }
 
 cat("\n=== Report Generation Complete ===\n")
+
